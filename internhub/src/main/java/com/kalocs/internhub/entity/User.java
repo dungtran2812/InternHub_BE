@@ -22,13 +22,15 @@ public class User {
     private UUID id;
 
     @NotBlank
-    @Size(max = 20)
+    @Size(max = 50)
     private String username;
 
     @NotBlank
     @Size(max = 50)
     @Email
     private String email;
+
+    private String fullName;
 
     @NotBlank
     @Size(max = 120)
