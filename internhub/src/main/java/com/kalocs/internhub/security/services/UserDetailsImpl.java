@@ -4,15 +4,22 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import com.kalocs.internhub.entity.User;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.stereotype.Component;
 
+@Component
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserDetailsImpl implements UserDetails {
   private static final long serialVersionUID = 1L;
 
@@ -26,15 +33,6 @@ public class UserDetailsImpl implements UserDetails {
   private String password;
 
   private String role;
-
-  public UserDetailsImpl(UUID id, String username, String email, String password,
-      String role) {
-    this.id = id;
-    this.username = username;
-    this.email = email;
-    this.password = password;
-    this.role = role;
-  }
 
   public static UserDetailsImpl build(User user) {
 

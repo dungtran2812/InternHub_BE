@@ -1,7 +1,9 @@
 package com.kalocs.internhub.controller;
 
 import com.kalocs.internhub.common.URLConstant;
+import com.kalocs.internhub.payload.request.LoginRequest;
 import com.kalocs.internhub.payload.request.SignupModel;
+import com.kalocs.internhub.payload.response.JwtResponseModel;
 import com.kalocs.internhub.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.extern.log4j.Log4j2;
@@ -28,6 +30,14 @@ public class AuthController {
             log.info("signup() AuthController end | " + result);
             return ResponseEntity.ok().body("signup failed");
         }
+    }
+
+    @PostMapping("login")
+    public ResponseEntity<JwtResponseModel> login(@Valid @RequestBody LoginRequest loginRequest) {
+        log.info("login() AuthController start | " + loginRequest);
+        JwtResponseModel jwt = authService.login(loginRequest);
+        log.info("login() AuthController end | " + jwt);
+        return ResponseEntity.ok(jwt);
     }
 
 
