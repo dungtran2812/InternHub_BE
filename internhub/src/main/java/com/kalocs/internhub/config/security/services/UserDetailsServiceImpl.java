@@ -1,4 +1,4 @@
-package com.kalocs.internhub.security.services;
+package com.kalocs.internhub.config.security.services;
 
 import com.kalocs.internhub.entity.User;
 import com.kalocs.internhub.repository.UserRepository;
