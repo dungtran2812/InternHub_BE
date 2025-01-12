@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(URLConstant.AUTH)
 @Log4j2
+@CrossOrigin
 public class AuthController {
 
     @Autowired
