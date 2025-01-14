@@ -1,7 +1,6 @@
 package com.kalocs.internhub.service.implement;
 
 import com.kalocs.internhub.business.UserBusiness;
-import com.kalocs.internhub.config.handler.AppException;
 import com.kalocs.internhub.config.security.services.UserDetailsImpl;
 import com.kalocs.internhub.entity.User;
 import com.kalocs.internhub.payload.request.LoginRequest;
@@ -10,6 +9,8 @@ import com.kalocs.internhub.payload.response.JwtResponseModel;
 import com.kalocs.internhub.repository.UserRepository;
 import com.kalocs.internhub.config.security.jwt.JwtUtils;
 import com.kalocs.internhub.service.AuthService;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -27,6 +28,7 @@ import java.util.UUID;
 @Component
 @Service
 @Log4j2
+@AllArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
     @Autowired
@@ -39,7 +41,6 @@ public class AuthServiceImpl implements AuthService {
     AuthenticationManager authenticationManager;
     @Autowired
     JwtUtils jwtUtils;
-    private User user;
 
     @Override
     public boolean signup(SignupModel signupModel) {
@@ -62,19 +63,24 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public JwtResponseModel login(LoginRequest loginRequest) {
-        log.info("login() AuthServiceImpl Start | " + loginRequest);
-        User user = userBusiness.getUserByEmail(loginRequest.getEmail());
-        if (user == null) {
-            throw new UsernameNotFoundException("User not found");
+        try {
+            log.info("login() AuthServiceImpl Start | " + loginRequest);
+            User user = userBusiness.getUserByEmail(loginRequest.getEmail());
+            if (user == null) {
+                throw new UsernameNotFoundException("User not found");
+            }
+            if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
+                throw new BadCredentialsException("Wrong password");
+            }
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            String jwt = jwtUtils.generateJwtToken(authentication);
+            UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+            return new JwtResponseModel(jwt, "Bearer", userDetails.getId(), userDetails.getUsername(), loginRequest.getEmail(), userDetails.getRole());
+        } catch (Exception ex) {
+            throw ex;
         }
-        if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-            throw new BadCredentialsException("Wrong password");
-        }
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = jwtUtils.generateJwtToken(authentication);
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        return new JwtResponseModel(jwt, "Bearer", userDetails.getId(), userDetails.getUsername(), loginRequest.getEmail(), userDetails.getRole());
+
     }
 }
