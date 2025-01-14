@@ -1,9 +1,9 @@
-package com.kalocs.internhub.security.jwt;
+package com.kalocs.internhub.config.security.jwt;
 
 import java.security.Key;
 import java.util.Date;
 
-import com.kalocs.internhub.security.services.UserDetailsImpl;
+import com.kalocs.internhub.config.security.services.UserDetailsImpl;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;

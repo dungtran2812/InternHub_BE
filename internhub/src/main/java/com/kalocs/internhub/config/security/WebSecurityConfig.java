@@ -1,8 +1,8 @@
-package com.kalocs.internhub.security;
+package com.kalocs.internhub.config.security;
 
-import com.kalocs.internhub.security.jwt.AuthEntryPointJwt;
-import com.kalocs.internhub.security.jwt.AuthTokenFilter;
-import com.kalocs.internhub.security.services.UserDetailsServiceImpl;
+import com.kalocs.internhub.config.security.jwt.AuthEntryPointJwt;
+import com.kalocs.internhub.config.security.jwt.AuthTokenFilter;
+import com.kalocs.internhub.config.security.services.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -79,7 +79,7 @@ public class WebSecurityConfig { // extends WebSecurityConfigurerAdapter {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf(csrf -> csrf.disable())
+        http.csrf(csrf -> csrf.disable()).cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.disable())
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth ->

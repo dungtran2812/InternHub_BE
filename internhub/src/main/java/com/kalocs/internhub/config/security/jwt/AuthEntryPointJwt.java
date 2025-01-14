@@ -1,4 +1,4 @@
-package com.kalocs.internhub.security.jwt;
+package com.kalocs.internhub.config.security.jwt;
 
 import java.io.IOException;
 import java.util.HashMap;

@@ -1,4 +1,4 @@
-package com.kalocs.internhub.security.services;
+package com.kalocs.internhub.config.security.services;
 
 import java.util.Collection;
 import java.util.List;
