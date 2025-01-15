@@ -5,20 +5,23 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "job_category")
+@Table(name = "recruiters")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class JobCategory {
+public class Recruiter {
+
     @Id
     private UUID id;
     private String name;
-    private String description;
+    private String email;
+    private String position;
+    private String phone;
 
-    @OneToMany(mappedBy = "category")
-    private List<Job> jobs;
+    @ManyToOne
+    @JoinColumn(name = "company_id")
+    private Company company;
 }

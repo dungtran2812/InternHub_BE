@@ -1,10 +1,10 @@
 package com.kalocs.internhub.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
+import org.apache.catalina.Manager;
 
+import java.util.List;
 import java.util.UUID;
 
 @Table(name = "companies")
@@ -17,4 +17,10 @@ public class Company {
     private String address;
     private String industry;
     private String description;
+
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
+    private List<Recruiter> recruiters;
+
+    @OneToMany(mappedBy = "company")
+    private List<Job> jobs;
 }
