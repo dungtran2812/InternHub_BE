@@ -23,19 +23,19 @@ import java.util.List;
 @Log4j2
 public class SwaggerConfig {
     @Value("${server.port}")
-    private String BASE_URL;
+    private String baseURL;
     @Value("${server.servlet.context-path}")
-    private String CONTEXT_PATH;
+    private String contextPath;
     @Bean
     public OpenAPI myOpenAPI() {
         Server devServer = new Server();
-        devServer.setUrl(BASE_URL);
+        devServer.setUrl(baseURL);
         devServer.setDescription("Server URL in Development environment");
 
         Contact myContact = new Contact();
         myContact.setName("Kalocs Company");
         myContact.setEmail("internhub.kalocs@gmail.com");
-        log.info("Swagger: http://localhost:" + BASE_URL + CONTEXT_PATH + "/swagger-ui/index.html");
+        log.info("Swagger: http://localhost:{}{}/swagger-ui/index.html", baseURL, contextPath);
         Info information = new Info()
                 .title("InternHub API")
                 .version("1.0")

@@ -11,8 +11,13 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class UserBusinessImpl implements UserBusiness {
-    @Autowired
+
     UserRepository userRepository;
+
+    @Autowired
+    public UserBusinessImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Override
     public User getUserByEmail(String email) {
