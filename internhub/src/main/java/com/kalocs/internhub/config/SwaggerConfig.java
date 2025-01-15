@@ -29,7 +29,7 @@ public class SwaggerConfig {
     @Bean
     public OpenAPI myOpenAPI() {
         Server devServer = new Server();
-        devServer.setUrl(baseURL);
+        devServer.setUrl("http://localhost:" + baseURL + contextPath);
         devServer.setDescription("Server URL in Development environment");
 
         Contact myContact = new Contact();
