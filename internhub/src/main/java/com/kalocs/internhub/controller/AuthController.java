@@ -17,27 +17,31 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin("*")
 public class AuthController {
 
-    @Autowired
     AuthService authService;
+
+    @Autowired
+    public AuthController(AuthService authService) {
+        this.authService = authService;
+    }
 
     @PostMapping("signup")
     public ResponseEntity<String> signup(@Valid @RequestBody SignupModel signupModel) {
-        log.info("signup() AuthController start | " + signupModel);
+        log.info("signup() AuthController start | {}", signupModel);
         boolean result = authService.signup(signupModel);
         if (result) {
-            log.info("signup() AuthController end | " + result);
+            log.info("signup() AuthController end | {}", result);
             return ResponseEntity.ok().body("signup successful");
         } else {
-            log.info("signup() AuthController end | " + result);
+            log.info("signup() AuthController fail | {}", result);
             return ResponseEntity.ok().body("signup failed");
         }
     }
 
     @PostMapping("login")
     public ResponseEntity<JwtResponseModel> login(@Valid @RequestBody LoginRequest loginRequest) {
-        log.info("login() AuthController start | " + loginRequest);
+        log.info("login() AuthController start | {}", loginRequest);
         JwtResponseModel jwt = authService.login(loginRequest);
-        log.info("login() AuthController end | " + jwt);
+        log.info("login() AuthController end | {}", jwt);
         return ResponseEntity.ok(jwt);
     }
 

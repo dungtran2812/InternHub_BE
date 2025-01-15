@@ -10,7 +10,6 @@ import com.kalocs.internhub.repository.UserRepository;
 import com.kalocs.internhub.config.security.jwt.JwtUtils;
 import com.kalocs.internhub.service.AuthService;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -31,16 +30,22 @@ import java.util.UUID;
 @AllArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
-    @Autowired
     UserRepository userRepository;
-    @Autowired
     PasswordEncoder passwordEncoder;
-    @Autowired
     UserBusiness userBusiness;
-    @Autowired
     AuthenticationManager authenticationManager;
-    @Autowired
     JwtUtils jwtUtils;
+
+    @Autowired
+    public AuthServiceImpl(UserRepository userRepository,
+                           PasswordEncoder passwordEncoder,
+                           UserBusiness userBusiness,
+                           JwtUtils jwtUtils) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.userBusiness = userBusiness;
+        this.jwtUtils = jwtUtils;
+    }
 
     @Override
     public boolean signup(SignupModel signupModel) {
@@ -56,7 +61,7 @@ public class AuthServiceImpl implements AuthService {
             userRepository.save(user);
             return true;
         } catch (Exception e) {
-            log.error("Error during create user " + signupModel.getFullName() + ": " + e);
+            log.error("Error during create user {}: {}", signupModel.getFullName(), e);
             return false;
         }
     }
@@ -64,7 +69,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public JwtResponseModel login(LoginRequest loginRequest) {
         try {
-            log.info("login() AuthServiceImpl Start | " + loginRequest);
+            log.info("login() AuthServiceImpl Start | {}", loginRequest);
             User user = userBusiness.getUserByEmail(loginRequest.getEmail());
             if (user == null) {
                 throw new UsernameNotFoundException("User not found");
@@ -79,6 +84,7 @@ public class AuthServiceImpl implements AuthService {
             UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
             return new JwtResponseModel(jwt, "Bearer", userDetails.getId(), userDetails.getUsername(), loginRequest.getEmail(), userDetails.getRole());
         } catch (Exception ex) {
+            log.error("login() AuthServiceImpl Error | {}: {}", loginRequest.getEmail(), ex.getMessage());
             throw ex;
         }
 

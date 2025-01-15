@@ -11,8 +11,12 @@ import java.util.UUID;
 @Component
 public class CompanyBusinessImpl implements CompanyBusiness {
 
+    private final CompanyRepository companyRepository;
+
     @Autowired
-    private CompanyRepository companyRepository;
+    public CompanyBusinessImpl(CompanyRepository companyRepository) {
+        this.companyRepository = companyRepository;
+    }
 
     @Override
     public Company getCompany(UUID id) {

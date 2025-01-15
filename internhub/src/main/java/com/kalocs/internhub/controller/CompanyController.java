@@ -15,8 +15,13 @@ import java.util.UUID;
 @RequestMapping(URLConstant.COMPANY)
 @CrossOrigin("*")
 public class CompanyController {
+
+    private final CompanyService companyService;
+
     @Autowired
-    private CompanyService companyService;
+    public CompanyController(CompanyService companyService) {
+        this.companyService = companyService;
+    }
 
     @GetMapping("{id}")
     public ResponseEntity<Company> getCompany(@PathVariable UUID id) {

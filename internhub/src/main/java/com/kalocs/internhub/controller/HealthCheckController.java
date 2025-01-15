@@ -9,14 +9,19 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Date;
+
 @RestController
 @RequestMapping(URLConstant.HEALTH_CHECK)
 @Log4j2
 public class HealthCheckController {
     @GetMapping
-    public Job healthCheck() {
-        Job job = new Job();
-        return job;
+    public String healthCheck() {
+        log.info("Health Check Started");
+        Date currentDate = new Date();
+        String message = "Health Check at " + currentDate + ": OK!";
+        log.info("Health Check End: {}", currentDate);
+        return message;
     }
 
 }
