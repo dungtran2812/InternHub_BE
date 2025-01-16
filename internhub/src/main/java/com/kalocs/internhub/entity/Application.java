@@ -1,22 +1,26 @@
 package com.kalocs.internhub.entity;
 
+import com.kalocs.internhub.common.ApplicationStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.DynamicUpdate;
 
 import java.math.BigInteger;
 import java.util.UUID;
 
 @Entity
-@Table(name = "feedbacks")
+@Table(name = "applications")
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class Feedback {
+@NoArgsConstructor
+public class Application {
     @Id
     private UUID id;
+    private BigInteger date;
+    private ApplicationStatus status;
+    private String resume;
+    private String coverLetter;
 
     @ManyToOne
     @JoinColumn(name = "student_id")
@@ -25,8 +29,5 @@ public class Feedback {
     @ManyToOne
     @JoinColumn(name = "job_id")
     private Job job;
-
-    private String feedback;
-    private BigInteger date;
 
 }

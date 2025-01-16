@@ -4,29 +4,23 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.DynamicUpdate;
 
-import java.math.BigInteger;
 import java.util.UUID;
 
 @Entity
-@Table(name = "feedbacks")
+@Table(name = "internship_requests")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Feedback {
+public class InternshipRequest {
     @Id
     private UUID id;
-
-    @ManyToOne
-    @JoinColumn(name = "student_id")
-    private Student student;
 
     @ManyToOne
     @JoinColumn(name = "job_id")
     private Job job;
 
-    private String feedback;
-    private BigInteger date;
-
+    @ManyToOne
+    @JoinColumn(name = "university_id")
+    private University university;
 }
