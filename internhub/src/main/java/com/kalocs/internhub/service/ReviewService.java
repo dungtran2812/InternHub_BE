@@ -1,9 +1,9 @@
-package com.kalocs.internhub.business;
+package com.kalocs.internhub.service;
 
 import com.kalocs.internhub.entity.Review;
 
 import java.util.List;
 
-public interface ReviewBusiness {
+public interface ReviewService {
     List<Review> getReview();
 }
