@@ -33,6 +33,7 @@ public class AuthServiceImpl implements AuthService {
     UserRepository userRepository;
     PasswordEncoder passwordEncoder;
     UserBusiness userBusiness;
+    @Autowired
     AuthenticationManager authenticationManager;
     JwtUtils jwtUtils;
 
