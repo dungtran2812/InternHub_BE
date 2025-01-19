@@ -2,6 +2,7 @@ package com.kalocs.internhub.controller;
 
 import com.kalocs.internhub.common.URLConstant;
 import com.kalocs.internhub.entity.Review;
+import com.kalocs.internhub.model.ReviewDTO;
 import com.kalocs.internhub.service.ReviewService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +24,9 @@ public class ReviewController {
     private ReviewService reviewService;
 
     @GetMapping
-    public ResponseEntity<List<Review>> getReview() {
+    public ResponseEntity<List<ReviewDTO>> getReview() {
         log.info("getReview() ReviewController start");
-        List<Review> result = reviewService.getReview();
+        List<ReviewDTO> result = reviewService.getReview();
         log.info("getReview() ReviewController end | {}", result);
         return ResponseEntity.ok().body(result);
     }
