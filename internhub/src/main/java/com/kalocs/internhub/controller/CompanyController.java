@@ -2,12 +2,14 @@ package com.kalocs.internhub.controller;
 
 import com.kalocs.internhub.common.URLConstant;
 import com.kalocs.internhub.entity.Company;
+import com.kalocs.internhub.model.CompanyDTO;
 import com.kalocs.internhub.service.CompanyService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -29,5 +31,13 @@ public class CompanyController {
         Company company = companyService.getCompany(id);
         log.info("getCompany() CompanyController End | " + company);
         return ResponseEntity.ok().body(company);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<CompanyDTO>> getAllCompany() {
+        log.info("getAllCompany() CompanyController Start |");
+        List<CompanyDTO> companies = companyService.getAllCompanies();
+        log.info("getAllCompany() CompanyController End |");
+        return ResponseEntity.ok().body(companies);
     }
 }

@@ -6,6 +6,7 @@ import com.kalocs.internhub.repository.CompanyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.UUID;
 
 @Component
@@ -21,5 +22,10 @@ public class CompanyBusinessImpl implements CompanyBusiness {
     @Override
     public Company getCompany(UUID id) {
         return companyRepository.findCompanyById(id);
+    }
+
+    @Override
+    public List<Company> getAllCompanies() {
+        return companyRepository.findAll();
     }
 }
