@@ -17,6 +17,7 @@ public class Company {
     private String address;
     private String industry;
     private String description;
+    private String image;
 
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
     private List<Recruiter> recruiters;

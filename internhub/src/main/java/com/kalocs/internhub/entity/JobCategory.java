@@ -18,6 +18,7 @@ public class JobCategory {
     private UUID id;
     private String name;
     private String description;
+    private String image;
 
     @OneToMany(mappedBy = "category")
     private List<Job> jobs;
