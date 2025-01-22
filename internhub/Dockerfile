@@ -6,7 +6,7 @@ WORKDIR /app
 
 # Copy Gradle wrapper and configuration files to cache dependencies
 COPY gradle/ gradle/
-COPY gradlew settings.gradle build.gradle* /app/
+COPY gradlew settings.gradle* build.gradle* /app/
 
 # Make Gradle wrapper executable
 RUN chmod +x ./gradlew
