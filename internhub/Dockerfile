@@ -5,7 +5,7 @@ FROM eclipse-temurin:17-jdk-alpine AS build
 WORKDIR /app
 
 # Copy Gradle wrapper and configuration files to cache dependencies
-COPY gradle/ gradle/
+COPY gradle/wrapper/gradle-wrapper.jar gradle/wrapper/gradle-wrapper.properties /app/gradle/wrapper/
 COPY gradlew* settings.gradle* build.gradle* /app/
 
 # Make Gradle wrapper executable
