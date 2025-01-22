@@ -11,10 +11,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class SignupModel {
     @NotBlank
-    private String fullName;
+    String fullName;
     @NotBlank
-    private String password;
+    String password;
     @Email
     @NotBlank
-    private String email;
+    String email;
 }
