@@ -3,6 +3,7 @@ package com.kalocs.internhub.controller;
 import com.kalocs.internhub.common.URLConstant;
 import com.kalocs.internhub.entity.Company;
 import com.kalocs.internhub.model.CompanyDTO;
+import com.kalocs.internhub.payload.request.CompanyRequest;
 import com.kalocs.internhub.service.CompanyService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,5 +40,13 @@ public class CompanyController {
         List<CompanyDTO> companies = companyService.getAllCompanies();
         log.info("getAllCompany() CompanyController End |");
         return ResponseEntity.ok().body(companies);
+    }
+
+    @PostMapping
+    public ResponseEntity<CompanyDTO> createCompany(@RequestBody CompanyRequest company) {
+        log.info("createCompany() CompanyController Start | " + company);
+        CompanyDTO createdCompany = companyService.createCompany(company);
+        log.info("createCompany() CompanyController End | " + createdCompany);
+        return ResponseEntity.ok().body(createdCompany);
     }
 }

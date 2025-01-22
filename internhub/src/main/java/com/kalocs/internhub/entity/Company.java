@@ -16,6 +16,7 @@ public class Company {
     private String name;
     private String address;
     private String industry;
+    @Column(columnDefinition = "TEXT")
     private String description;
     private String image;
 

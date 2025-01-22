@@ -8,4 +8,5 @@ import java.util.UUID;
 public interface CompanyBusiness {
     Company getCompany(UUID id);
     List<Company> getAllCompanies();
+    Company createCompany(Company company);
 }
