@@ -20,6 +20,7 @@ public class Recruiter {
     private String email;
     private String position;
     private String phone;
+    private String avtUrl;
 
     @ManyToOne
     @JoinColumn(name = "company_id")
