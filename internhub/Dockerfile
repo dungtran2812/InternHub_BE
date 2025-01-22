@@ -4,7 +4,7 @@ RUN apt-get update
 RUN apt-get install openjdk-17-jdk -y
 COPY . .
 
-RUN ./gradlew bootJar --no-daemon
+RUN ./gradlew build --no-daemon -x :bootRepackage -x test --continue
 
 FROM openjdk:17-jdk-slim
 
