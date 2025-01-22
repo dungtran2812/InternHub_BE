@@ -1,36 +1,14 @@
-# Use a base image with Java 17
-FROM eclipse-temurin:17-jdk-alpine AS build
+FROM gradle:8.11.1-jdk8-alpine AS build
+COPY --chown=gradle:gradle . /home/gradle/src
+WORKDIR /home/gradle/src
+RUN gradle build --no-daemon
 
-# Set the working directory in the container
-WORKDIR /app
+FROM openjdk:8-jre-slim
 
-# Copy Gradle wrapper and configuration files to cache dependencies
-COPY gradle/wrapper/gradle-wrapper.jar gradle/wrapper/gradle-wrapper.properties /app/gradle/wrapper/
-COPY gradlew* settings.gradle* build.gradle* /app/
-
-# Make Gradle wrapper executable
-RUN chmod +x ./gradlew
-
-# Cache dependencies
-RUN ./gradlew dependencies --no-daemon
-
-# Copy the entire project
-COPY . .
-
-# Build the application
-RUN ./gradlew build --no-daemon
-
-# Use a minimal base image for the final stage
-FROM eclipse-temurin:17-jre-alpine
-
-# Set the working directory in the container
-WORKDIR /app
-
-# Copy the built application JAR from the build stage
-COPY --from=build /app/build/libs/*.jar app.jar
-
-# Expose the port the app runs on
 EXPOSE 8080
 
-# Define the command to run the application
-CMD ["java", "-jar", "app.jar"]
+RUN mkdir /app
+
+COPY --from=build /home/gradle/src/build/libs/*.jar /app/spring-boot-application.jar
+
+ENTRYPOINT ["java", "-XX:+UnlockExperimentalVMOptions", "-XX:+UseCGroupMemoryLimitForHeap", "-Djava.security.egd=file:/dev/./urandom","-jar","/app/spring-boot-application.jar"]
