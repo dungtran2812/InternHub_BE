@@ -25,13 +25,13 @@ public class SwaggerConfig {
     @Bean
     public OpenAPI myOpenAPI() {
         Server devServer = new Server();
-        devServer.setUrl("http://localhost:" + baseURL + contextPath);
+        devServer.setUrl("https://internhubbe-production.up.railway.app" + contextPath);
         devServer.setDescription("Server URL in Development environment");
 
         Contact myContact = new Contact();
         myContact.setName("Kalocs Company");
         myContact.setEmail("internhub.kalocs@gmail.com");
-        log.info("Swagger: http://localhost:{}{}/swagger-ui/index.html", baseURL, contextPath);
+        log.info("Swagger: https://internhubbe-production.up.railway.app{}/swagger-ui/index.html", contextPath);
 
         Info information = new Info()
                 .title("InternHub API")
