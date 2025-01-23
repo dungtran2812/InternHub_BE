@@ -54,4 +54,32 @@ public class CompanyServiceImpl implements CompanyService {
             throw e;
         }
     }
+
+    @Override
+    public CompanyDTO updateCompany(UUID id, CompanyRequest company) {
+        try{
+            log.debug("updateCompany CompanyServiceImpl start | {}", company);
+            Company companyToUpdate = modelMapper.map(company, Company.class);
+            companyToUpdate.setId(id);
+            CompanyDTO updatedCompany = modelMapper.map(companyBusiness.updateCompany(companyToUpdate), CompanyDTO.class);
+            log.debug("updateCompany CompanyServiceImpl end | {}", updatedCompany);
+            return updatedCompany;
+        } catch (Exception e) {
+            log.error("updateCompany CompanyServiceImpl error | {}", e.getMessage());
+            throw e;
+        }
+    }
+
+    @Override
+    public boolean deleteCompany(UUID id) {
+        try{
+            log.debug("deleteCompany CompanyServiceImpl start | {}", id);
+            boolean check = companyBusiness.deleteCompany(id);
+            log.debug("deleteCompany CompanyServiceImpl end | {}", id);
+            return check;
+        } catch (Exception e) {
+            log.error("deleteCompany CompanyServiceImpl error | {}", e.getMessage());
+            throw e;
+        }
+    }
 }
