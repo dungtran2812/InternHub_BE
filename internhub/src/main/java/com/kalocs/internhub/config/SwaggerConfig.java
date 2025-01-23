@@ -25,13 +25,18 @@ public class SwaggerConfig {
     @Bean
     public OpenAPI myOpenAPI() {
         Server devServer = new Server();
-        devServer.setUrl("https://internhubbe-production.up.railway.app" + contextPath);
+        Server prodServer = new Server();
+
+        devServer.setUrl("http://localhost:" + baseURL + contextPath);
         devServer.setDescription("Server URL in Development environment");
+
+        prodServer.setUrl("https://internhubbe-production.up.railway.app" + contextPath);
+        prodServer.setDescription("Server URL in Production environment");
 
         Contact myContact = new Contact();
         myContact.setName("Kalocs Company");
         myContact.setEmail("internhub.kalocs@gmail.com");
-        log.info("Swagger: https://internhubbe-production.up.railway.app{}/swagger-ui/index.html", contextPath);
+        log.info("Swagger: http://localhost:{}{}/swagger-ui/index.html", baseURL, contextPath);
 
         Info information = new Info()
                 .title("InternHub API")
@@ -49,7 +54,7 @@ public class SwaggerConfig {
 
         return new OpenAPI()
                 .info(information)
-                .servers(List.of(devServer))
+                .servers(List.of(devServer, prodServer))
                 .components(new Components().addSecuritySchemes("Bearer Authentication", securityScheme))
                 .addSecurityItem(securityRequirement);
     }
