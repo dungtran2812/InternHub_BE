@@ -8,4 +8,5 @@ public class URLConstant {
     public static final String COMPANY = "company";
     public static final String REVIEW = "review";
     public static final String JOB = "job";
+    public static final String UNIVERSITY = "university";
 }
