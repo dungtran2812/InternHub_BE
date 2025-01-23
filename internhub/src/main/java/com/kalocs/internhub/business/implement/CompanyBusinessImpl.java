@@ -28,4 +28,9 @@ public class CompanyBusinessImpl implements CompanyBusiness {
     public List<Company> getAllCompanies() {
         return companyRepository.findAll();
     }
+
+    @Override
+    public Company createCompany(Company company) {
+        return companyRepository.save(company);
+    }
 }
