@@ -44,9 +44,31 @@ public class CompanyController {
 
     @PostMapping
     public ResponseEntity<CompanyDTO> createCompany(@RequestBody CompanyRequest company) {
-        log.info("createCompany() CompanyController Start | " + company);
+        log.info("createCompany() CompanyController Start | {}", company);
         CompanyDTO createdCompany = companyService.createCompany(company);
-        log.info("createCompany() CompanyController End | " + createdCompany);
+        log.info("createCompany() CompanyController End | {}", createdCompany);
         return ResponseEntity.ok().body(createdCompany);
+    }
+
+    @PutMapping("{id}")
+    public ResponseEntity<CompanyDTO> updateCompany(@PathVariable UUID id, @RequestBody CompanyRequest company) {
+        log.info("updateCompany() CompanyController Start | {}", company);
+        CompanyDTO updatedCompany = companyService.updateCompany(id, company);
+        log.info("updateCompany() CompanyController End | {}", updatedCompany);
+        return ResponseEntity.ok().body(updatedCompany);
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<String> deleteCompany(@PathVariable UUID id) {
+        log.info("deleteCompany() CompanyController Start | {}", id);
+        boolean check = companyService.deleteCompany(id);
+
+        if (check) {
+            log.info("deleteCompany() CompanyController End | Deleted");
+            return ResponseEntity.ok().body("Company deleted successfully");
+        } else {
+            log.info("deleteCompany() CompanyController End | Not Deleted");
+            return ResponseEntity.ok().body("Company cannot be deleted");
+        }
     }
 }

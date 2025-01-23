@@ -33,4 +33,15 @@ public class CompanyBusinessImpl implements CompanyBusiness {
     public Company createCompany(Company company) {
         return companyRepository.save(company);
     }
+
+    @Override
+    public Company updateCompany(Company companyToUpdate) {
+        return companyRepository.save(companyToUpdate);
+    }
+
+    @Override
+    public boolean deleteCompany(UUID id) {
+        companyRepository.deleteById(id);
+        return true;
+    }
 }
