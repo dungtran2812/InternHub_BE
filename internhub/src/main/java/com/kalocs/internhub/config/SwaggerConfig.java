@@ -25,8 +25,13 @@ public class SwaggerConfig {
     @Bean
     public OpenAPI myOpenAPI() {
         Server devServer = new Server();
+        Server prodServer = new Server();
+
         devServer.setUrl("http://localhost:" + baseURL + contextPath);
         devServer.setDescription("Server URL in Development environment");
+
+        prodServer.setUrl("https://internhubbe-production.up.railway.app" + contextPath);
+        prodServer.setDescription("Server URL in Production environment");
 
         Contact myContact = new Contact();
         myContact.setName("Kalocs Company");
@@ -49,7 +54,7 @@ public class SwaggerConfig {
 
         return new OpenAPI()
                 .info(information)
-                .servers(List.of(devServer))
+                .servers(List.of(devServer, prodServer))
                 .components(new Components().addSecuritySchemes("Bearer Authentication", securityScheme))
                 .addSecurityItem(securityRequirement);
     }

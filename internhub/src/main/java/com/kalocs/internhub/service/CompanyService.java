@@ -12,4 +12,8 @@ public interface CompanyService {
     List<CompanyDTO> getAllCompanies();
 
     CompanyDTO createCompany(CompanyRequest company);
+
+    CompanyDTO updateCompany(UUID id, CompanyRequest company);
+
+    boolean deleteCompany(UUID id);
 }
