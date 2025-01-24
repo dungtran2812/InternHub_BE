@@ -28,4 +28,10 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(new ErrorMessage(HttpStatus.UNAUTHORIZED.value(), new Date(), ex.getMessage()));
     }
+
+    @ExceptionHandler(AppException.class)
+    public ResponseEntity<ErrorMessage> handleAppException(AppException ex) {
+        return ResponseEntity.status(ex.getCode())
+                .body(new ErrorMessage(ex.getCode(), new Date(), ex.getMessage()));
+    }
 }
