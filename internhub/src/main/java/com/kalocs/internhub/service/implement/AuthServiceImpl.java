@@ -1,7 +1,9 @@
 package com.kalocs.internhub.service.implement;
 
 import com.kalocs.internhub.business.UserBusiness;
+import com.kalocs.internhub.common.UserRole;
 import com.kalocs.internhub.config.security.services.UserDetailsImpl;
+import com.kalocs.internhub.entity.Student;
 import com.kalocs.internhub.entity.User;
 import com.kalocs.internhub.payload.request.LoginRequest;
 import com.kalocs.internhub.payload.request.SignupModel;
@@ -51,13 +53,13 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public boolean signup(SignupModel signupModel) {
         try {
-            User user = new User();
+            User user = new Student();
             user.setEmail(signupModel.getEmail());
             user.setUsername(signupModel.getEmail());
             user.setPassword(passwordEncoder.encode(signupModel.getPassword()));
             user.setFullName(signupModel.getFullName());
             user.setId(UUID.randomUUID());
-            user.setRole("student");
+            user.setRole(UserRole.STUDENT);
             log.info(user);
             userRepository.save(user);
             return true;
