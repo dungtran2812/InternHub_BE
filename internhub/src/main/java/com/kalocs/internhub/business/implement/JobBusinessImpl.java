@@ -21,7 +21,7 @@ public class JobBusinessImpl implements JobBusiness {
     @Override
     public Page<Job> getJobsByCategory(UUID categoryId, Pageable pageable) {
         log.debug("getJobsByCategory() JobBusinessImpl start | category: {}", categoryId);
-        Page<Job> result = jobRepository.findByCategoryId(categoryId, pageable);
+        Page<Job> result = jobRepository.findAll(pageable);
         log.debug("getJobsByCategory() JobBusinessImpl end");
         return result;
     }
