@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+import com.kalocs.internhub.common.UserRole;
 import com.kalocs.internhub.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -32,7 +33,7 @@ public class UserDetailsImpl implements UserDetails {
   @JsonIgnore
   private String password;
 
-  private String role;
+  private UserRole role;
 
   public static UserDetailsImpl build(User user) {
 
@@ -55,7 +56,7 @@ public class UserDetailsImpl implements UserDetails {
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
-    return List.of(new SimpleGrantedAuthority(role));
+    return List.of(new SimpleGrantedAuthority(role.toString()));
   }
 
   @Override

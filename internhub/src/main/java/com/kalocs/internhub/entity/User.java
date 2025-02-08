@@ -1,11 +1,14 @@
 package com.kalocs.internhub.entity;
 
+import com.kalocs.internhub.common.UserRole;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.web.servlet.handler.UserRoleAuthorizationInterceptor;
 
 import java.util.UUID;
 
@@ -16,7 +19,9 @@ import java.util.UUID;
                 @UniqueConstraint(columnNames = "email")
         })
 @AllArgsConstructor
+@NoArgsConstructor
 @Data
+@Inheritance(strategy = InheritanceType.JOINED)
 public class User {
     @Id
     private UUID id;
@@ -36,14 +41,5 @@ public class User {
     @Size(max = 120)
     private String password;
 
-    private String role;
-
-    public User() {
-    }
-
-    public User(String username, String email, String password) {
-        this.username = username;
-        this.email = email;
-        this.password = password;
-    }
+    private UserRole role;
 }

@@ -1,5 +1,6 @@
 package com.kalocs.internhub.payload.response;
 
+import com.kalocs.internhub.common.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,5 +16,5 @@ public class JwtResponseModel {
     private UUID id;
     private String username;
     private String email;
-    private String role;
+    private UserRole role;
 }
