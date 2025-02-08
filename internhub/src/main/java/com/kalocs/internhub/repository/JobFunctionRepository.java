@@ -1,12 +1,9 @@
 package com.kalocs.internhub.repository;
 
-import com.kalocs.internhub.entity.Job;
+import com.kalocs.internhub.entity.JobFunction;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.UUID;
-
 @Repository
-public interface JobRepository extends JpaRepository<Job, UUID> {
-
+public interface JobFunctionRepository extends JpaRepository<JobFunction, Integer> {
 }

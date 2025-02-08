@@ -15,14 +15,23 @@ public class Company {
     private UUID id;
     private String name;
     private String address;
-    private String industry;
     @Column(columnDefinition = "TEXT")
     private String description;
-    private String image;
+    private String logoCompany;
+    private String backgroundCompany;
+    private String website;
 
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
     private List<Recruiter> recruiters;
 
     @OneToMany(mappedBy = "company")
     private List<Job> jobs;
+
+    @ManyToMany
+    @JoinTable(
+            name = "company_industry",
+            joinColumns = @JoinColumn(name = "company_id"),
+            inverseJoinColumns = @JoinColumn(name = "industry_id")
+    )
+    private List<Industry> industries;
 }
