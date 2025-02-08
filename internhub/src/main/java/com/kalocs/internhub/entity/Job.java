@@ -16,17 +16,21 @@ import java.util.UUID;
 public class Job {
     @Id
     private UUID id;
-    private String name;
+    private String jobTitle;
     private String description;
     private String requirement;
-    private String type;
     private String duration;
     private int quantity;
+    private String location;
     private JobStatus status;
 
     @ManyToOne
-    @JoinColumn(name = "category_id")
-    private JobCategory category;
+    @JoinColumn(name = "job_function_id")
+    private JobFunction jobFunction;
+
+    @ManyToOne
+    @JoinColumn(name = "industry_id")
+    private Industry industry;
 
     @ManyToOne
     @JoinColumn(name = "company_id")
