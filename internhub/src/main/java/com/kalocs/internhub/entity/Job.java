@@ -16,7 +16,7 @@ import java.util.UUID;
 public class Job {
     @Id
     private UUID id;
-    private String name;
+    private String jobTitle;
     private String description;
     private String requirement;
     private String type;
