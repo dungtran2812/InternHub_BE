@@ -10,11 +10,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class JobDTO {
     private String id;
-    private String name;
+    private String jobTitle;
     private String description;
     private String requirement;
-    private String type;
     private String duration;
     private int quantity;
+    private String location;
     private JobStatus status;
+    private JobFunctionDTO jobFunction;
+    private IndustryDTO industry;
+    private CompanyDTO company;
 }

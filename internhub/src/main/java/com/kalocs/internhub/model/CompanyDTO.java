@@ -1,8 +1,11 @@
 package com.kalocs.internhub.model;
 
+import com.kalocs.internhub.entity.Industry;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -11,6 +14,9 @@ public class CompanyDTO {
     private String id;
     private String name;
     private String address;
-    private String industry;
     private String description;
+    private String logoCompany;
+    private String backgroundCompany;
+    private String website;
+    private List<Industry> industries;
 }
