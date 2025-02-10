@@ -1,9 +1,6 @@
 package com.kalocs.internhub.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,9 +16,9 @@ public class Industry {
     private int id;
     private String name;
 
-    @ManyToMany(mappedBy = "industries")
+    @ManyToMany(mappedBy = "industries", fetch = FetchType.LAZY)
     private List<Company> companies;
 
-    @OneToMany(mappedBy = "industry")
+    @OneToMany(mappedBy = "industry", fetch = FetchType.LAZY)
     private List<Job> jobs;
 }
