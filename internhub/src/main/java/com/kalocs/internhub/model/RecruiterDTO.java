@@ -18,5 +18,6 @@ public class RecruiterDTO {
     private String position;
     private String phone;
     private String avtUrl;
+    private String backgroundUrl;
     private CompanyDTO company;
 }

@@ -23,6 +23,7 @@ public class Job {
     private int quantity;
     private String location;
     private JobStatus status;
+    private String salary;
 
     @ManyToOne
     @JoinColumn(name = "job_function_id")
