@@ -1,6 +1,6 @@
 spring:
   datasource:
     password: 12345
-    url: jdbc:postgresql://localhost:5432/intern_hub
+    url: jdbc:postgresql://dpg-cu8gjel6l47c738hs450-a.singapore-postgres.render.com:5432/internhubdb
     username: postgres
     driver-class-name: org.postgresql.Driver
