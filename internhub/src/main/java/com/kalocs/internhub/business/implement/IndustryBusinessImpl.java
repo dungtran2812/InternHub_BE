@@ -7,6 +7,7 @@ import com.kalocs.internhub.repository.IndustryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -23,4 +24,15 @@ public class IndustryBusinessImpl implements IndustryBusiness {
     public Optional<Industry> getById(int industryId) {
         return industryRepository.findById(industryId);
     }
+
+    @Override
+    public Industry getIndustryById(Integer id) {
+        return industryRepository.findIndustryById(id);
+    }
+
+    @Override
+    public List<Industry> getAllIndustries() {
+        return industryRepository.findAll();
+    }
 }
+

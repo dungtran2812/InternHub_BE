@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.UUID;
 
 public interface JobService {
-    Page<JobDTO> getJobsByCategory(String categoryId, Pageable pageable);
 
     JobDTO getJob(UUID id);
 
@@ -20,4 +19,6 @@ public interface JobService {
     JobDTO updateJob(UUID id, JobRequest job);
 
     boolean deleteJob(UUID id);
+
+    Page<JobDTO> searchJob(String searchText, String jobFunctionId, String industryId, Pageable pageable);
 }
