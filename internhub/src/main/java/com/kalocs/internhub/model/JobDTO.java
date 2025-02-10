@@ -16,6 +16,7 @@ public class JobDTO {
     private String duration;
     private int quantity;
     private String location;
+    private String salary;
     private JobStatus status;
     private JobFunctionDTO jobFunction;
     private IndustryDTO industry;
