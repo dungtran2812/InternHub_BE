@@ -17,7 +17,9 @@ public class Job {
     @Id
     private UUID id;
     private String jobTitle;
+    @Column(columnDefinition = "TEXT")
     private String description;
+    @Column(columnDefinition = "TEXT")
     private String requirement;
     private String duration;
     private int quantity;
