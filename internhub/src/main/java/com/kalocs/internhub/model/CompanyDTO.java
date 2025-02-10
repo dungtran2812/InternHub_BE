@@ -18,5 +18,5 @@ public class CompanyDTO {
     private String logoCompany;
     private String backgroundCompany;
     private String website;
-    private List<Industry> industries;
+    private List<IndustryDTO> industries;
 }

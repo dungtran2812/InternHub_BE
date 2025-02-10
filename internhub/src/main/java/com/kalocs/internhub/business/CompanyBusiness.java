@@ -5,7 +5,7 @@ import com.kalocs.internhub.entity.Company;
 import java.util.List;
 import java.util.UUID;
 
-public interface CompanyBusiness {
+public interface CompanyBusiness extends BaseBusiness<Company> {
     Company getCompany(UUID id);
     List<Company> getAllCompanies();
     Company createCompany(Company company);
