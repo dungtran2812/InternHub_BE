@@ -6,4 +6,7 @@ import java.util.Optional;
 
 public interface JobFunctionBusiness {
     Optional<JobFunction> getById(int jobFunctionId);
+    List<JobFunction> getAllJobFunctions();
+    JobFunction getJobFunctionById(Integer id);
 }
+

@@ -22,4 +22,14 @@ public class JobFunctionBusinessImpl implements JobFunctionBusiness {
     public Optional<JobFunction> getById(int jobFunctionId) {
         return jobFunctionRepository.findById(jobFunctionId);
     }
+    
+    @Override
+    public JobFunction getJobFunctionById(Integer id) {
+        return jobFunctionRepository.findJobFunctionById(id);
+    }
+
+    @Override
+    public List<JobFunction> getAllJobFunctions() {
+        return jobFunctionRepository.findAll();
+    }
 }
