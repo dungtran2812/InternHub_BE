@@ -6,6 +6,6 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.UUID;
 
-public interface JobBusiness {
+public interface JobBusiness extends BaseBusiness<Job> {
     Page<Job> getJobsByCategory(UUID categoryId, Pageable pageable);
 }

@@ -13,10 +13,15 @@ import java.util.UUID;
 
 @Component
 @Log4j2
-public class JobBusinessImpl implements JobBusiness {
+public class JobBusinessImpl extends BaseBusinessImpl<Job,JobRepository> implements JobBusiness {
+
+    private final JobRepository jobRepository;
 
     @Autowired
-    private JobRepository jobRepository;
+    protected JobBusinessImpl(JobRepository repository, JobRepository jobRepository) {
+        super(repository);
+        this.jobRepository = jobRepository;
+    }
 
     @Override
     public Page<Job> getJobsByCategory(UUID categoryId, Pageable pageable) {

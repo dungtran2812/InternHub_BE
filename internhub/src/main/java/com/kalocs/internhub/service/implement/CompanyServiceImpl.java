@@ -1,6 +1,7 @@
 package com.kalocs.internhub.service.implement;
 
 import com.kalocs.internhub.business.CompanyBusiness;
+import com.kalocs.internhub.config.handler.AppException;
 import com.kalocs.internhub.entity.Company;
 import com.kalocs.internhub.model.CompanyDTO;
 import com.kalocs.internhub.payload.request.CompanyRequest;
@@ -18,23 +19,31 @@ import java.util.UUID;
 public class CompanyServiceImpl implements CompanyService {
 
     private final CompanyBusiness companyBusiness;
-    @Autowired
-    private ModelMapper modelMapper;
+    private final ModelMapper modelMapper;
 
     @Autowired
-    public CompanyServiceImpl(CompanyBusiness companyBusiness) {
+    public CompanyServiceImpl(CompanyBusiness companyBusiness, ModelMapper modelMapper) {
         this.companyBusiness = companyBusiness;
+        this.modelMapper = modelMapper;
     }
 
     @Override
-    public Company getCompany(UUID id) {
-        return companyBusiness.getCompany(id);
+    public CompanyDTO getCompany(UUID id) {
+        try {
+            log.debug("getCompany CompanyServiceImpl start | {}", id);
+            CompanyDTO company = modelMapper.map(companyBusiness.getById(id).orElseThrow(() -> new AppException(404,"Cannot find Company with id: " + id.toString())), CompanyDTO.class);
+            log.debug("getCompany CompanyServiceImpl end | {}", company);
+            return company;
+        } catch (Exception e) {
+            log.error("getCompany CompanyServiceImpl error | {}", e.getMessage());
+            throw e;
+        }
     }
 
     @Override
     public List<CompanyDTO> getAllCompanies() {
         log.debug("getAllCompanies CompanyServiceImpl start");
-        List<CompanyDTO> companies = companyBusiness.getAllCompanies().stream()
+        List<CompanyDTO> companies = companyBusiness.getAll().stream()
                 .map( company -> modelMapper.map(company, CompanyDTO.class)).toList();
         log.debug("getAllCompanies CompanyServiceImpl end");
         return companies;
@@ -46,7 +55,7 @@ public class CompanyServiceImpl implements CompanyService {
             log.debug("createCompany CompanyServiceImpl start | {}", company);
             Company companyToCreate = modelMapper.map(company, Company.class);
             companyToCreate.setId(UUID.randomUUID());
-            CompanyDTO createdCompany = modelMapper.map(companyBusiness.createCompany(companyToCreate), CompanyDTO.class);
+            CompanyDTO createdCompany = modelMapper.map(companyBusiness.create(companyToCreate), CompanyDTO.class);
             log.debug("createCompany CompanyServiceImpl end | {}", createdCompany);
             return createdCompany;
         } catch (Exception e) {
@@ -59,9 +68,12 @@ public class CompanyServiceImpl implements CompanyService {
     public CompanyDTO updateCompany(UUID id, CompanyRequest company) {
         try{
             log.debug("updateCompany CompanyServiceImpl start | {}", company);
+            if (companyBusiness.getById(id).isEmpty()) {
+                throw new AppException(404, "Cannot find Company to update with id: " + id.toString());
+            }
             Company companyToUpdate = modelMapper.map(company, Company.class);
             companyToUpdate.setId(id);
-            CompanyDTO updatedCompany = modelMapper.map(companyBusiness.updateCompany(companyToUpdate), CompanyDTO.class);
+            CompanyDTO updatedCompany = modelMapper.map(companyBusiness.update(companyToUpdate), CompanyDTO.class);
             log.debug("updateCompany CompanyServiceImpl end | {}", updatedCompany);
             return updatedCompany;
         } catch (Exception e) {
@@ -74,7 +86,10 @@ public class CompanyServiceImpl implements CompanyService {
     public boolean deleteCompany(UUID id) {
         try{
             log.debug("deleteCompany CompanyServiceImpl start | {}", id);
-            boolean check = companyBusiness.deleteCompany(id);
+            if (companyBusiness.getById(id).isEmpty()) {
+                throw new AppException(404, "Cannot find Company to delete with id: " + id.toString());
+            }
+            boolean check = companyBusiness.delete(id);
             log.debug("deleteCompany CompanyServiceImpl end | {}", id);
             return check;
         } catch (Exception e) {

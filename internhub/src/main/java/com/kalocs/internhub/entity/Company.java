@@ -2,7 +2,6 @@ package com.kalocs.internhub.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import org.apache.catalina.Manager;
 
 import java.util.List;
 import java.util.UUID;
@@ -21,10 +20,10 @@ public class Company {
     private String backgroundCompany;
     private String website;
 
-    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Recruiter> recruiters;
 
-    @OneToMany(mappedBy = "company")
+    @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
     private List<Job> jobs;
 
     @ManyToMany

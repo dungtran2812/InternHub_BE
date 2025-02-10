@@ -10,12 +10,13 @@ import java.util.List;
 import java.util.UUID;
 
 @Component
-public class CompanyBusinessImpl implements CompanyBusiness {
+public class CompanyBusinessImpl extends BaseBusinessImpl<Company,CompanyRepository> implements CompanyBusiness {
 
     private final CompanyRepository companyRepository;
 
     @Autowired
-    public CompanyBusinessImpl(CompanyRepository companyRepository) {
+    public CompanyBusinessImpl(CompanyRepository companyRepository, CompanyRepository repository) {
+        super(repository);
         this.companyRepository = companyRepository;
     }
 
