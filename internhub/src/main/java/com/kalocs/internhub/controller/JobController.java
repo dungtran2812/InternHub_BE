@@ -4,6 +4,7 @@ import com.kalocs.internhub.common.URLConstant;
 import com.kalocs.internhub.model.JobDTO;
 import com.kalocs.internhub.payload.request.JobRequest;
 import com.kalocs.internhub.service.JobService;
+import jakarta.annotation.Nullable;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -25,14 +26,16 @@ public class JobController {
     private JobService jobService;
 
     @GetMapping("search")
-    public ResponseEntity<Page<JobDTO>> getJobsByCategory(
-            @RequestParam String categoryId,
+    public ResponseEntity<Page<JobDTO>> searchJob(
+            @RequestParam @Nullable String searchText,
+            @RequestParam @Nullable String jobFunctionId,
+            @RequestParam @Nullable String industryId,
             int page, int pageSize) {
-        log.info("getJobsByCategory() JobController start | category: {}", categoryId);
+        log.info("searchJob() JobController start | jobTitle: {}, jobFunctionId: {}, industryId: {}", searchText, jobFunctionId, industryId);
         Pageable pageable = PageRequest.of(page, pageSize);
-        Page<JobDTO> result = jobService.getJobsByCategory(categoryId, pageable);
-        log.info("getJobsByCategory() JobController end | {}", result);
-        return ResponseEntity.ok().body(result);
+        Page<JobDTO> jobs = jobService.searchJob(searchText, jobFunctionId, industryId, pageable);
+        log.info("searchJob() JobController end | {}", jobs);
+        return ResponseEntity.ok().body(jobs);
     }
 
     @GetMapping("{id}")

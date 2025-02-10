@@ -1,5 +1,6 @@
 package com.kalocs.internhub.service.implement;
 
+import ch.qos.logback.core.util.StringUtil;
 import com.kalocs.internhub.business.CompanyBusiness;
 import com.kalocs.internhub.business.IndustryBusiness;
 import com.kalocs.internhub.business.JobBusiness;
@@ -40,16 +41,6 @@ public class JobServiceImpl implements JobService {
         this.industryBusiness = industryBusiness;
         this.jobFunctionBusiness = jobFunctionBusiness;
         this.modelMapper = modelMapper;
-    }
-
-    @Override
-    public Page<JobDTO> getJobsByCategory(String categoryId, Pageable pageable) {
-        log.debug("getJobsByCategory() JobServiceImpl start | category: {}", categoryId);
-        Page<Job> jobList = jobBusiness.getJobsByCategory(UUID.fromString(categoryId), pageable);
-        List<JobDTO> jobDTOList = jobList.map(job -> modelMapper.map(job, JobDTO.class)).getContent();
-        Page<JobDTO> result = new PageImpl<>(jobDTOList, jobList.getPageable(), jobList.getTotalElements());
-        log.debug("getJobsByCategory() JobServiceImpl end");
-        return result;
     }
 
     @Override
@@ -156,6 +147,24 @@ public class JobServiceImpl implements JobService {
             return check;
         } catch (Exception e) {
             log.error("deleteJob() JobServiceImpl error | {}", e.getMessage());
+            throw e;
+        }
+    }
+
+    @Override
+    public Page<JobDTO> searchJob(String searchText, String jobFunctionId, String industryId, Pageable pageable) {
+        try {
+            log.debug("searchJob() JobServiceImpl start | jobTitle: {}, jobFunctionId: {}, industryId: {}", searchText, jobFunctionId, industryId);
+            if (searchText != null) {
+                searchText = searchText.trim();
+            }
+            Page<Job> jobList = jobBusiness.searchJobs(searchText,industryId,jobFunctionId,pageable);
+            List<JobDTO> jobDTOList = jobList.map(job -> modelMapper.map(job, JobDTO.class)).getContent();
+            Page<JobDTO> result = new PageImpl<>(jobDTOList, jobList.getPageable(), jobList.getTotalElements());
+            log.debug("searchJob() JobServiceImpl end | {}", result);
+            return result;
+        } catch (Exception e) {
+            log.error("searchJob() JobServiceImpl error | {}", e.getMessage());
             throw e;
         }
     }

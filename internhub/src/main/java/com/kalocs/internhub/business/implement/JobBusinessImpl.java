@@ -24,10 +24,18 @@ public class JobBusinessImpl extends BaseBusinessImpl<Job,JobRepository> impleme
     }
 
     @Override
-    public Page<Job> getJobsByCategory(UUID categoryId, Pageable pageable) {
-        log.debug("getJobsByCategory() JobBusinessImpl start | category: {}", categoryId);
-        Page<Job> result = jobRepository.findAll(pageable);
-        log.debug("getJobsByCategory() JobBusinessImpl end");
+    public Page<Job> searchJobs(String jobTitle, String industryId, String jobFunctionId, Pageable pageable) {
+        log.debug("searchJob() JobBusinessImpl start | jobTitle: {}, industryId: {}, jobFunctionId: {}", jobTitle, industryId, jobFunctionId);
+        Integer industry = null;
+        Integer jobFunction = null;
+        if (!(industryId == null || industryId.isEmpty())) {
+            industry = Integer.parseInt(industryId);
+        }
+        if (!(jobFunctionId == null || jobFunctionId.isEmpty())) {
+            jobFunction = Integer.parseInt(jobFunctionId);
+        }
+        Page<Job> result = jobRepository.searchJobs(jobTitle, industry, jobFunction, pageable);
+        log.debug("searchJob() JobBusinessImpl end");
         return result;
     }
 }
