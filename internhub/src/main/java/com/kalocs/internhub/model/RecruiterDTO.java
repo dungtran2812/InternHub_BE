@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.UUID;
 
 @Data
 @AllArgsConstructor
@@ -13,7 +12,7 @@ import java.util.UUID;
 @Builder
 public class RecruiterDTO {
     private String id;
-    private String name;
+    private String fullName;
     private String email;
     private String position;
     private String phone;
