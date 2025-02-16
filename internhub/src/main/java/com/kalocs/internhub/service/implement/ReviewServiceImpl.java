@@ -1,7 +1,6 @@
 package com.kalocs.internhub.service.implement;
 
 import com.kalocs.internhub.business.ReviewBusiness;
-import com.kalocs.internhub.entity.Review;
 import com.kalocs.internhub.model.ReviewDTO;
 import com.kalocs.internhub.service.ReviewService;
 import lombok.extern.log4j.Log4j2;
@@ -15,10 +14,14 @@ import java.util.List;
 @Log4j2
 public class ReviewServiceImpl implements ReviewService {
 
+    private final ReviewBusiness reviewBusiness;
+    private final ModelMapper modelMapper;
+
     @Autowired
-    private ReviewBusiness reviewBusiness;
-    @Autowired
-    private ModelMapper modelMapper;
+    public ReviewServiceImpl(ReviewBusiness reviewBusiness, ModelMapper modelMapper) {
+        this.reviewBusiness = reviewBusiness;
+        this.modelMapper = modelMapper;
+    }
 
     @Override
     public List<ReviewDTO> getReview() {

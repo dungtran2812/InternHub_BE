@@ -20,12 +20,16 @@ import java.util.UUID;
 @Log4j2
 public class RecruiterServiceImpl implements RecruiterService {
 
+    private final RecruiterBusiness recruiterBusiness;
+    private final CompanyBusiness companyBusiness;
+    private final ModelMapper modelMapper;
+
     @Autowired
-    private RecruiterBusiness recruiterBusiness;
-    @Autowired
-    private CompanyBusiness companyBusiness;
-    @Autowired
-    private ModelMapper modelMapper;
+    public RecruiterServiceImpl(RecruiterBusiness recruiterBusiness, CompanyBusiness companyBusiness, ModelMapper modelMapper) {
+        this.recruiterBusiness = recruiterBusiness;
+        this.companyBusiness = companyBusiness;
+        this.modelMapper = modelMapper;
+    }
 
     @Override
     public RecruiterDTO getRecruiter(UUID id) {

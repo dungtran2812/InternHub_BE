@@ -13,8 +13,12 @@ import java.util.List;
 @Log4j2
 public class ReviewBusinessImpl implements ReviewBusiness {
 
+    private final ReviewRepository reviewRepository;
+
     @Autowired
-    private ReviewRepository reviewRepository;
+    public ReviewBusinessImpl(ReviewRepository reviewRepository) {
+        this.reviewRepository = reviewRepository;
+    }
 
     @Override
     public List<Review> getReview() {
