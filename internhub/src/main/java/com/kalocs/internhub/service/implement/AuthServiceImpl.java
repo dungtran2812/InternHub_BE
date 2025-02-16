@@ -11,6 +11,7 @@ import com.kalocs.internhub.entity.Student;
 import com.kalocs.internhub.entity.User;
 import com.kalocs.internhub.model.RecruiterDTO;
 import com.kalocs.internhub.model.StudentDTO;
+import com.kalocs.internhub.model.UserDTO;
 import com.kalocs.internhub.payload.request.LoginRequest;
 import com.kalocs.internhub.payload.request.SignupModel;
 import com.kalocs.internhub.payload.request.signup.RecruiterSignupRequest;
@@ -19,6 +20,7 @@ import com.kalocs.internhub.payload.response.JwtResponseModel;
 import com.kalocs.internhub.repository.UserRepository;
 import com.kalocs.internhub.config.security.jwt.JwtUtils;
 import com.kalocs.internhub.service.AuthService;
+import com.kalocs.internhub.utils.AuthUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
@@ -69,17 +71,18 @@ public class AuthServiceImpl implements AuthService {
             log.info("login() AuthServiceImpl Start | {}", loginRequest);
             User user = userBusiness.getUserByEmail(loginRequest.getEmail());
             if (user == null) {
-                throw new UsernameNotFoundException("User not found");
+                throw new AppException(401, "Email chưa được đăng ký");
             }
             if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-                throw new BadCredentialsException("Wrong password");
+                throw new AppException(401, "Mật khẩu không đúng");
             }
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String jwt = jwtUtils.generateJwtToken(authentication);
-            UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-            return new JwtResponseModel(jwt, "Bearer", userDetails.getId(), userDetails.getUsername(), loginRequest.getEmail(), userDetails.getRole());
+            UserDTO userDTO = modelMapper.map(user, UserDTO.class);
+            log.info("login() AuthServiceImpl End |");
+            return new JwtResponseModel(jwt, "Bearer",userDTO);
         } catch (Exception ex) {
             log.error("login() AuthServiceImpl Error | {}: {}", loginRequest.getEmail(), ex.getMessage());
             throw ex;
