@@ -14,11 +14,15 @@ import java.util.List;
 @Log4j2
 @Component
 public class IndustryServiceImpl implements IndustryService {
-    @Autowired
-    private IndustryBusiness industryBusiness;
+    private final IndustryBusiness industryBusiness;
+
+    private final ModelMapper modelMapper;
 
     @Autowired
-    private ModelMapper modelMapper;
+    public IndustryServiceImpl(IndustryBusiness industryBusiness, ModelMapper modelMapper) {
+        this.industryBusiness = industryBusiness;
+        this.modelMapper = modelMapper;
+    }
 
     @Override
     public IndustryDTO getIndustryById(Integer id) {

@@ -1,6 +1,5 @@
 package com.kalocs.internhub.service;
 
-import com.kalocs.internhub.entity.Industry;
 import com.kalocs.internhub.model.IndustryDTO;
 
 import java.util.List;

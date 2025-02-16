@@ -1,6 +1,5 @@
 package com.kalocs.internhub.service.implement;
 
-import ch.qos.logback.core.util.StringUtil;
 import com.kalocs.internhub.business.CompanyBusiness;
 import com.kalocs.internhub.business.IndustryBusiness;
 import com.kalocs.internhub.business.JobBusiness;
@@ -79,20 +78,20 @@ public class JobServiceImpl implements JobService {
             // Check if company exists
             if (job.getCompanyId() == null) {
                 log.debug("createJob() JobServiceImpl end | null");
-                throw new AppException(400, "Company Id is required to create Job");
+                throw new AppException(400, "Cần có công ty để tạo việc làm");
             }
-            Company company = companyBusiness.getById(job.getCompanyId()).orElseThrow(() -> new AppException(404, "Cannot find Company to create Job with id: " + job.getCompanyId().toString()));
+            Company company = companyBusiness.getById(job.getCompanyId()).orElseThrow(() -> new AppException(404, "Không tìm thấy công ty đã chọn"));
             jobToCreate.setCompany(company);
 
             // Check if industry exists
             if (!(job.getIndustryId() == null || job.getIndustryId().isEmpty())) {
-                Industry industry = industryBusiness.getById(Integer.parseInt(job.getIndustryId())).orElseThrow(() -> new AppException(404, "Cannot find Industry to create Job with id: " + job.getIndustryId()));
+                Industry industry = industryBusiness.getById(Integer.parseInt(job.getIndustryId())).orElseThrow(() -> new AppException(404, "Không tìm thấy lĩnh vực đã chọn"));
                 jobToCreate.setIndustry(industry);
             }
 
             // Check if job function exists
             if (!(job.getJobFunctionId() == null || job.getJobFunctionId().isEmpty())) {
-                JobFunction jobFunction = jobFunctionBusiness.getById(Integer.parseInt(job.getJobFunctionId())).orElseThrow(() -> new AppException(404, "Cannot find JobFunction to create Job with id: " + job.getJobFunctionId()));
+                JobFunction jobFunction = jobFunctionBusiness.getById(Integer.parseInt(job.getJobFunctionId())).orElseThrow(() -> new AppException(404, "Không tìm thấy ngành nghề đã chọn"));
                 jobToCreate.setJobFunction(jobFunction);
             }
 
@@ -109,19 +108,19 @@ public class JobServiceImpl implements JobService {
     public JobDTO updateJob(UUID id, JobRequest job) {
         try {
             log.debug("updateJob() JobServiceImpl start | {}", job);
-            Job jobToSource = jobBusiness.getById(id).orElseThrow(() -> new AppException(404, "Cannot find Job to update with id: " + id.toString()));
+            Job jobToSource = jobBusiness.getById(id).orElseThrow(() -> new AppException(404, "Không tìm thấy việc làm"));
             Job jobToUpdate = modelMapper.map(job, Job.class);
             jobToUpdate.setId(id);
             jobToUpdate.setCompany(jobToSource.getCompany());
             // Check if industry exists
             if (!(job.getIndustryId() == null || job.getIndustryId().isEmpty())) {
-                Industry industry = industryBusiness.getById(Integer.parseInt(job.getIndustryId())).orElseThrow(() -> new AppException(404, "Cannot find Industry to update Job with id: " + job.getIndustryId()));
+                Industry industry = industryBusiness.getById(Integer.parseInt(job.getIndustryId())).orElseThrow(() -> new AppException(404, "Không tìm thấy lĩnh vực đã chọn"));
                 jobToUpdate.setIndustry(industry);
             }
 
             // Check if job function exists
             if (!(job.getJobFunctionId() == null || job.getJobFunctionId().isEmpty())) {
-                JobFunction jobFunction = jobFunctionBusiness.getById(Integer.parseInt(job.getJobFunctionId())).orElseThrow(() -> new AppException(404, "Cannot find JobFunction to update Job with id: " + job.getJobFunctionId()));
+                JobFunction jobFunction = jobFunctionBusiness.getById(Integer.parseInt(job.getJobFunctionId())).orElseThrow(() -> new AppException(404, "Không thấy ngành nghề đã chọn"));
                 jobToUpdate.setJobFunction(jobFunction);
             }
 
@@ -140,7 +139,7 @@ public class JobServiceImpl implements JobService {
             log.debug("deleteJob() JobServiceImpl start | {}", id);
             if (jobBusiness.getById(id).isEmpty()) {
                 log.debug("deleteJob() JobServiceImpl end | false");
-                throw new AppException(404, "Cannot find Job to delete with id: " + id.toString());
+                throw new AppException(404, "Không tìm thấy việc làm để xoá");
             }
             boolean check = jobBusiness.delete(id);
             log.debug("deleteJob() JobServiceImpl end | {}", check);

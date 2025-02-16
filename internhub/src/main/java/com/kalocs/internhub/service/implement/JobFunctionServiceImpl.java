@@ -16,12 +16,13 @@ import java.util.List;
 public class JobFunctionServiceImpl implements JobFunctionService {
     private final JobFunctionBusiness jobFunctionBusiness;
 
+    private final ModelMapper modelMapper;
+
     @Autowired
-    public JobFunctionServiceImpl(JobFunctionBusiness jobFunctionBusiness) {
+    public JobFunctionServiceImpl(JobFunctionBusiness jobFunctionBusiness, ModelMapper modelMapper) {
         this.jobFunctionBusiness = jobFunctionBusiness;
+        this.modelMapper = modelMapper;
     }
-    @Autowired
-    private ModelMapper modelMapper;
 
     @Override
     public JobFunctionDTO getJobFunctionById(Integer id) {

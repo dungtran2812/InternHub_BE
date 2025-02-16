@@ -12,8 +12,12 @@ import java.util.UUID;
 @Component
 public class RecruiterBusinessImpl implements RecruiterBusiness {
 
+    private final RecruiterRepository recruiterRepository;
+
     @Autowired
-    private RecruiterRepository recruiterRepository;
+    public RecruiterBusinessImpl(RecruiterRepository recruiterRepository) {
+        this.recruiterRepository = recruiterRepository;
+    }
 
     @Override
     public Recruiter getRecruiter(UUID id) {

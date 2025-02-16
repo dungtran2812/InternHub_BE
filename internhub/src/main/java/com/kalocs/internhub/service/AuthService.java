@@ -3,7 +3,6 @@ package com.kalocs.internhub.service;
 import com.kalocs.internhub.model.RecruiterDTO;
 import com.kalocs.internhub.model.StudentDTO;
 import com.kalocs.internhub.payload.request.LoginRequest;
-import com.kalocs.internhub.payload.request.SignupModel;
 import com.kalocs.internhub.payload.request.signup.RecruiterSignupRequest;
 import com.kalocs.internhub.payload.request.signup.StudentSignupRequest;
 import com.kalocs.internhub.payload.response.JwtResponseModel;

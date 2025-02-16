@@ -5,7 +5,6 @@ import com.kalocs.internhub.business.UserBusiness;
 import com.kalocs.internhub.common.StudentStatus;
 import com.kalocs.internhub.common.UserRole;
 import com.kalocs.internhub.config.handler.AppException;
-import com.kalocs.internhub.config.security.services.UserDetailsImpl;
 import com.kalocs.internhub.entity.Recruiter;
 import com.kalocs.internhub.entity.Student;
 import com.kalocs.internhub.entity.User;
@@ -13,24 +12,20 @@ import com.kalocs.internhub.model.RecruiterDTO;
 import com.kalocs.internhub.model.StudentDTO;
 import com.kalocs.internhub.model.UserDTO;
 import com.kalocs.internhub.payload.request.LoginRequest;
-import com.kalocs.internhub.payload.request.SignupModel;
 import com.kalocs.internhub.payload.request.signup.RecruiterSignupRequest;
 import com.kalocs.internhub.payload.request.signup.StudentSignupRequest;
 import com.kalocs.internhub.payload.response.JwtResponseModel;
 import com.kalocs.internhub.repository.UserRepository;
 import com.kalocs.internhub.config.security.jwt.JwtUtils;
 import com.kalocs.internhub.service.AuthService;
-import com.kalocs.internhub.utils.AuthUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
@@ -68,7 +63,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public JwtResponseModel login(LoginRequest loginRequest) {
         try {
-            log.info("login() AuthServiceImpl Start | {}", loginRequest);
+            log.debug("login() AuthServiceImpl Start | {}", loginRequest);
             User user = userBusiness.getUserByEmail(loginRequest.getEmail());
             if (user == null) {
                 throw new AppException(401, "Email chưa được đăng ký");
@@ -81,7 +76,7 @@ public class AuthServiceImpl implements AuthService {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String jwt = jwtUtils.generateJwtToken(authentication);
             UserDTO userDTO = modelMapper.map(user, UserDTO.class);
-            log.info("login() AuthServiceImpl End |");
+            log.debug("login() AuthServiceImpl End |");
             return new JwtResponseModel(jwt, "Bearer",userDTO);
         } catch (Exception ex) {
             log.error("login() AuthServiceImpl Error | {}: {}", loginRequest.getEmail(), ex.getMessage());
@@ -95,7 +90,7 @@ public class AuthServiceImpl implements AuthService {
         try {
             log.debug("studentSignup() AuthServiceImpl Start | {}", studentSignupRequest);
             if (userBusiness.existsByEmail(studentSignupRequest.getEmail())) {
-                throw new AppException(406,"Email is already in use");
+                throw new AppException(406,"Email này đã được sử dụng");
             }
             Student student = modelMapper.map(studentSignupRequest, Student.class);
             student.setId(UUID.randomUUID());
@@ -117,7 +112,7 @@ public class AuthServiceImpl implements AuthService {
         try {
             log.debug("recruiterSignup() AuthServiceImpl Start | {}", recruiterSignupRequest);
             if (userBusiness.existsByEmail(recruiterSignupRequest.getEmail())) {
-                throw new AppException(406,"Email is already in use");
+                throw new AppException(406,"Email này đã được sử dụng");
             }
             Recruiter recruiter = modelMapper.map(recruiterSignupRequest, Recruiter.class);
             recruiter.setId(UUID.randomUUID());

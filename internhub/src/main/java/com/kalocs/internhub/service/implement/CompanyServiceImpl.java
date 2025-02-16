@@ -69,7 +69,7 @@ public class CompanyServiceImpl implements CompanyService {
         try{
             log.debug("updateCompany CompanyServiceImpl start | {}", company);
             if (companyBusiness.getById(id).isEmpty()) {
-                throw new AppException(404, "Cannot find Company to update with id: " + id.toString());
+                throw new AppException(404, "Không tìm thấy công ty với id: " + id.toString());
             }
             Company companyToUpdate = modelMapper.map(company, Company.class);
             companyToUpdate.setId(id);
@@ -87,7 +87,7 @@ public class CompanyServiceImpl implements CompanyService {
         try{
             log.debug("deleteCompany CompanyServiceImpl start | {}", id);
             if (companyBusiness.getById(id).isEmpty()) {
-                throw new AppException(404, "Cannot find Company to delete with id: " + id.toString());
+                throw new AppException(404, "Không tìm thấy công ty với id: " + id.toString());
             }
             boolean check = companyBusiness.delete(id);
             log.debug("deleteCompany CompanyServiceImpl end | {}", id);
