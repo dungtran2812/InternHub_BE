@@ -32,4 +32,9 @@ public class UserBusinessImpl implements UserBusiness {
         }
         return user;
     }
+
+    @Override
+    public boolean existsByEmail(String email) {
+        return userRepository.existsByEmail(email);
+    }
 }

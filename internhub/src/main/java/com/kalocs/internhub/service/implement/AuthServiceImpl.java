@@ -1,25 +1,31 @@
 package com.kalocs.internhub.service.implement;
 
+import com.kalocs.internhub.business.CompanyBusiness;
 import com.kalocs.internhub.business.UserBusiness;
+import com.kalocs.internhub.common.StudentStatus;
 import com.kalocs.internhub.common.UserRole;
-import com.kalocs.internhub.config.security.services.UserDetailsImpl;
+import com.kalocs.internhub.config.handler.AppException;
+import com.kalocs.internhub.entity.Recruiter;
 import com.kalocs.internhub.entity.Student;
 import com.kalocs.internhub.entity.User;
+import com.kalocs.internhub.model.RecruiterDTO;
+import com.kalocs.internhub.model.StudentDTO;
+import com.kalocs.internhub.model.UserDTO;
 import com.kalocs.internhub.payload.request.LoginRequest;
-import com.kalocs.internhub.payload.request.SignupModel;
+import com.kalocs.internhub.payload.request.signup.RecruiterSignupRequest;
+import com.kalocs.internhub.payload.request.signup.StudentSignupRequest;
 import com.kalocs.internhub.payload.response.JwtResponseModel;
 import com.kalocs.internhub.repository.UserRepository;
 import com.kalocs.internhub.config.security.jwt.JwtUtils;
 import com.kalocs.internhub.service.AuthService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
@@ -32,64 +38,98 @@ import java.util.UUID;
 @AllArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
-    UserRepository userRepository;
-    PasswordEncoder passwordEncoder;
-    UserBusiness userBusiness;
-    @Autowired
-    AuthenticationManager authenticationManager;
-    JwtUtils jwtUtils;
+    private UserRepository userRepository;
+    private PasswordEncoder passwordEncoder;
+    private UserBusiness userBusiness;
+    private AuthenticationManager authenticationManager;
+    private JwtUtils jwtUtils;
+    private ModelMapper modelMapper;
+    private CompanyBusiness companyBusiness;
 
     @Autowired
     public AuthServiceImpl(UserRepository userRepository,
                            PasswordEncoder passwordEncoder,
                            UserBusiness userBusiness,
-                           JwtUtils jwtUtils) {
+                           JwtUtils jwtUtils, AuthenticationManager authenticationManager, ModelMapper modelMapper, CompanyBusiness companyBusiness) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.userBusiness = userBusiness;
         this.jwtUtils = jwtUtils;
-    }
-
-    @Override
-    public boolean signup(SignupModel signupModel) {
-        try {
-            User user = new Student();
-            user.setEmail(signupModel.getEmail());
-            user.setUsername(signupModel.getEmail());
-            user.setPassword(passwordEncoder.encode(signupModel.getPassword()));
-            user.setFullName(signupModel.getFullName());
-            user.setId(UUID.randomUUID());
-            user.setRole(UserRole.STUDENT);
-            log.info(user);
-            userRepository.save(user);
-            return true;
-        } catch (Exception e) {
-            log.error("Error during create user {}: {}", signupModel.getFullName(), e);
-            return false;
-        }
+        this.authenticationManager = authenticationManager;
+        this.modelMapper = modelMapper;
+        this.companyBusiness = companyBusiness;
     }
 
     @Override
     public JwtResponseModel login(LoginRequest loginRequest) {
         try {
-            log.info("login() AuthServiceImpl Start | {}", loginRequest);
+            log.debug("login() AuthServiceImpl Start | {}", loginRequest);
             User user = userBusiness.getUserByEmail(loginRequest.getEmail());
             if (user == null) {
-                throw new UsernameNotFoundException("User not found");
+                throw new AppException(401, "Email chưa được đăng ký");
             }
             if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-                throw new BadCredentialsException("Wrong password");
+                throw new AppException(401, "Mật khẩu không đúng");
             }
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String jwt = jwtUtils.generateJwtToken(authentication);
-            UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-            return new JwtResponseModel(jwt, "Bearer", userDetails.getId(), userDetails.getUsername(), loginRequest.getEmail(), userDetails.getRole());
+            UserDTO userDTO = modelMapper.map(user, UserDTO.class);
+            log.debug("login() AuthServiceImpl End |");
+            return new JwtResponseModel(jwt, "Bearer",userDTO);
         } catch (Exception ex) {
             log.error("login() AuthServiceImpl Error | {}: {}", loginRequest.getEmail(), ex.getMessage());
             throw ex;
         }
 
     }
+
+    @Override
+    public StudentDTO studentSignup(StudentSignupRequest studentSignupRequest) {
+        try {
+            log.debug("studentSignup() AuthServiceImpl Start | {}", studentSignupRequest);
+            if (userBusiness.existsByEmail(studentSignupRequest.getEmail())) {
+                throw new AppException(406,"Email này đã được sử dụng");
+            }
+            Student student = modelMapper.map(studentSignupRequest, Student.class);
+            student.setId(UUID.randomUUID());
+            student.setRole(UserRole.STUDENT);
+            student.setPassword(passwordEncoder.encode(studentSignupRequest.getPassword()));
+            student.setUsername(studentSignupRequest.getEmail());
+            student.setStatus(StudentStatus.ACTIVE);
+            StudentDTO result = modelMapper.map(userRepository.save(student), StudentDTO.class);
+            log.debug("studentSignup() AuthServiceImpl End | {}", result);
+            return result;
+        } catch (Exception e) {
+            log.error("Error during create student {}: {}", studentSignupRequest.getFullName(), e);
+            throw e;
+        }
+    }
+
+    @Override
+    public RecruiterDTO recruiterSignup(RecruiterSignupRequest recruiterSignupRequest) {
+        try {
+            log.debug("recruiterSignup() AuthServiceImpl Start | {}", recruiterSignupRequest);
+            if (userBusiness.existsByEmail(recruiterSignupRequest.getEmail())) {
+                throw new AppException(406,"Email này đã được sử dụng");
+            }
+            Recruiter recruiter = modelMapper.map(recruiterSignupRequest, Recruiter.class);
+            recruiter.setId(UUID.randomUUID());
+            recruiter.setRole(UserRole.RECRUITER);
+            recruiter.setPassword(passwordEncoder.encode(recruiterSignupRequest.getPassword()));
+            recruiter.setUsername(recruiterSignupRequest.getEmail());
+            recruiter.setCompany(companyBusiness.getById(recruiterSignupRequest.getCompanyId()).orElseThrow(() -> {
+                log.error("Company not found");
+                return new AppException(404, "Company not found");
+            }));
+            RecruiterDTO result = modelMapper.map(userRepository.save(recruiter), RecruiterDTO.class);
+            log.debug("recruiterSignup() AuthServiceImpl End | {}", result);
+            return result;
+        } catch (Exception e) {
+            log.error("Error during create recruiter {}: {}", recruiterSignupRequest.getFullName(), e);
+            throw e;
+        }
+    }
 }
+

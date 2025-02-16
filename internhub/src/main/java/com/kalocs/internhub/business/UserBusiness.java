@@ -6,4 +6,5 @@ import com.kalocs.internhub.payload.request.LoginRequest;
 public interface UserBusiness {
     User getUserByEmail(String email);
     User login(LoginRequest loginRequest);
+    boolean existsByEmail(String email);
 }

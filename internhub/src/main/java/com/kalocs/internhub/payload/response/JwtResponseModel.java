@@ -1,6 +1,6 @@
 package com.kalocs.internhub.payload.response;
 
-import com.kalocs.internhub.common.UserRole;
+import com.kalocs.internhub.model.UserDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,8 +13,5 @@ import java.util.UUID;
 public class JwtResponseModel {
     private String token;
     private String type = "Bearer";
-    private UUID id;
-    private String username;
-    private String email;
-    private UserRole role;
+    private UserDTO user;
 }

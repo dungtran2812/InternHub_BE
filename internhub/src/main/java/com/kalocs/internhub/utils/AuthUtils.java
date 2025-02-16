@@ -1,0 +1,31 @@
+package com.kalocs.internhub.utils;
+
+import com.kalocs.internhub.config.handler.AppException;
+import com.kalocs.internhub.config.security.services.UserDetailsImpl;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+
+import java.util.UUID;
+
+public class AuthUtils {
+    private AuthUtils() {
+    }
+    public static UserDetailsImpl getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null) {
+            return (UserDetailsImpl) authentication.getPrincipal();
+        } else {
+            throw new AppException(401,"User not found in security context");
+        }
+    }
+
+    public static UUID getCurrentUserId() {
+        UserDetailsImpl user = getCurrentUser();
+        return user.getId();
+    }
+
+    public static String getCurrentUsername() {
+        UserDetailsImpl user = getCurrentUser();
+        return user.getUsername();
+    }
+}

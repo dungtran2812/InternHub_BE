@@ -1,8 +1,11 @@
 package com.kalocs.internhub.controller;
 
 import com.kalocs.internhub.common.URLConstant;
+import com.kalocs.internhub.model.RecruiterDTO;
+import com.kalocs.internhub.model.StudentDTO;
 import com.kalocs.internhub.payload.request.LoginRequest;
-import com.kalocs.internhub.payload.request.SignupModel;
+import com.kalocs.internhub.payload.request.signup.RecruiterSignupRequest;
+import com.kalocs.internhub.payload.request.signup.StudentSignupRequest;
 import com.kalocs.internhub.payload.response.JwtResponseModel;
 import com.kalocs.internhub.service.AuthService;
 import jakarta.validation.Valid;
@@ -24,17 +27,22 @@ public class AuthController {
         this.authService = authService;
     }
 
-    @PostMapping("signup")
-    public ResponseEntity<String> signup(@Valid @RequestBody SignupModel signupModel) {
-        log.info("signup() AuthController start | {}", signupModel);
-        boolean result = authService.signup(signupModel);
-        if (result) {
-            log.info("signup() AuthController end | {}", result);
-            return ResponseEntity.ok().body("signup successful");
-        } else {
-            log.info("signup() AuthController fail | {}", result);
-            return ResponseEntity.ok().body("signup failed");
-        }
+    @PostMapping("student/signup")
+    public ResponseEntity<StudentDTO> studentSignup(@Valid @RequestBody StudentSignupRequest studentSignupRequest) {
+        log.info("studentSignup() AuthController start | {}", studentSignupRequest);
+        StudentDTO result = authService.studentSignup(studentSignupRequest);
+        log.info("studentSignup() AuthController end | {}", result);
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("recruiter/signup")
+    public ResponseEntity<RecruiterDTO> recruiterSignup(@Valid @RequestBody RecruiterSignupRequest recruiterSignupRequest) {
+
+        log.info("recruiterSignup() AuthController start | {}", recruiterSignupRequest);
+        RecruiterDTO result = authService.recruiterSignup(recruiterSignupRequest);
+        log.info("recruiterSignup() AuthController end | {}", result);
+        return ResponseEntity.ok(result);
+
     }
 
     @PostMapping("login")
