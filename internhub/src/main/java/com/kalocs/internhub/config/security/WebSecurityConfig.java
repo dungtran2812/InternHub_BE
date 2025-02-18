@@ -2,12 +2,17 @@ package com.kalocs.internhub.config.security;
 
 import com.kalocs.internhub.config.security.jwt.AuthEntryPointJwt;
 import com.kalocs.internhub.config.security.jwt.AuthTokenFilter;
+import com.kalocs.internhub.config.security.oauth2.CustomOAuth2UserService;
+import com.kalocs.internhub.config.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
+import com.kalocs.internhub.config.security.oauth2.OAuth2AuthenticationFailureHandler;
+import com.kalocs.internhub.config.security.oauth2.OAuth2AuthenticationSuccessHandler;
 import com.kalocs.internhub.config.security.services.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -29,9 +34,24 @@ public class WebSecurityConfig { // extends WebSecurityConfigurerAdapter {
     @Autowired
     private AuthEntryPointJwt unauthorizedHandler;
 
+
+    @Autowired
+    private CustomOAuth2UserService customOAuth2UserService;
+
+    @Autowired
+    private OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
+
+    @Autowired
+    private OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
+
     @Bean
     public AuthTokenFilter authenticationJwtTokenFilter() {
         return new AuthTokenFilter();
+    }
+
+    @Bean
+    public HttpCookieOAuth2AuthorizationRequestRepository cookieAuthorizationRequestRepository() {
+        return new HttpCookieOAuth2AuthorizationRequestRepository();
     }
 
 //  @Override
@@ -88,7 +108,15 @@ public class WebSecurityConfig { // extends WebSecurityConfigurerAdapter {
                                 .requestMatchers("/healthcheck").permitAll()
                                 .requestMatchers("/swagger-ui/**").permitAll()
                                 .anyRequest().permitAll()
-                );
+                ).oauth2Login(a -> a.authorizationEndpoint(
+                        b->b.baseUri("/oauth2/authorize")
+                                .authorizationRequestRepository(cookieAuthorizationRequestRepository()))
+                .redirectionEndpoint(r->r.baseUri("/oauth2/callback/*"))
+                        .userInfoEndpoint(u->u.userService(customOAuth2UserService))
+                        .successHandler(oAuth2AuthenticationSuccessHandler)
+                        .failureHandler(oAuth2AuthenticationFailureHandler))
+                .httpBasic(Customizer.withDefaults())
+                .formLogin(Customizer.withDefaults());
 
         http.authenticationProvider(authenticationProvider());
 
