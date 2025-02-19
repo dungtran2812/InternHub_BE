@@ -1,9 +1,12 @@
 package com.kalocs.internhub.config.security.oauth2;
 
+import com.kalocs.internhub.common.StudentStatus;
+import com.kalocs.internhub.common.UserRole;
 import com.kalocs.internhub.config.handler.AppException;
 import com.kalocs.internhub.config.security.oauth2.user.OAuth2UserInfo;
 import com.kalocs.internhub.config.security.oauth2.user.OAuth2UserInfoFactory;
 import com.kalocs.internhub.config.security.services.UserDetailsImpl;
+import com.kalocs.internhub.entity.Student;
 import com.kalocs.internhub.entity.User;
 import com.kalocs.internhub.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -27,7 +31,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     @Override
     public OAuth2User loadUser(OAuth2UserRequest oAuth2UserRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(oAuth2UserRequest);
-
         try {
             return processOAuth2User(oAuth2UserRequest, oAuth2User);
         } catch (AuthenticationException ex) {
@@ -57,10 +60,15 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     }
 
     private User registerNewUser(OAuth2UserRequest oAuth2UserRequest, OAuth2UserInfo oAuth2UserInfo) {
-        User user = new User();
-        user.setFullName(oAuth2UserInfo.getName());
-        user.setEmail(oAuth2UserInfo.getEmail());
-        return userRepository.save(user);
+        Student student = new Student();
+        student.setUsername(oAuth2UserInfo.getEmail());
+        student.setFullName(oAuth2UserInfo.getName());
+        student.setEmail(oAuth2UserInfo.getEmail());
+        student.setStatus(StudentStatus.ACTIVE);
+        student.setAvtUrl(oAuth2UserInfo.getImageUrl());
+        student.setId(UUID.randomUUID());
+        student.setRole(UserRole.STUDENT);
+        return userRepository.save(student);
     }
 
     private User updateExistingUser(User existingUser, OAuth2UserInfo oAuth2UserInfo) {
