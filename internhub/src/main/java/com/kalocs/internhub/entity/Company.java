@@ -33,4 +33,7 @@ public class Company {
             inverseJoinColumns = @JoinColumn(name = "industry_id")
     )
     private List<Industry> industries;
+
+    @ElementCollection
+    private List<String> imageUrls;
 }
