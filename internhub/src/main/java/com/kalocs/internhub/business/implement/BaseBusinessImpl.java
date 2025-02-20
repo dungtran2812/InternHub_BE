@@ -43,4 +43,15 @@ public abstract class BaseBusinessImpl<T, R extends JpaRepository<T, UUID>> impl
             return false;
         }
     }
+
+    @Override
+    public boolean existsById(UUID id) {
+        return repository.existsById(id);
+    }
+
+    @Override
+    public long count() {
+        return repository.count();
+    }
+
 }

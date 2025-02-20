@@ -1,4 +1,6 @@
 package com.kalocs.internhub.business;
 
-public interface StudentBusiness {
+import com.kalocs.internhub.entity.Student;
+
+public interface StudentBusiness extends BaseBusiness<Student> {
 }

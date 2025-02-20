@@ -10,4 +10,6 @@ public interface BaseBusiness<T> {
     T create(T entity);
     T update(T entity);
     boolean delete(UUID id);
+    boolean existsById(UUID id);
+    long count();
 }

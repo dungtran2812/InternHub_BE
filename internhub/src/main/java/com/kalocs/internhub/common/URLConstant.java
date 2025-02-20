@@ -12,4 +12,5 @@ public class URLConstant {
     public static final String RECRUITER = "recruiter";
     public static final String INDUSTRY = "industry";
     public static final String JOB_FUNCTION = "job-function";
+    public static final String APPLICATION = "application";
 }
