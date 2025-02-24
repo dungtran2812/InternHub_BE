@@ -20,6 +20,7 @@ public class Recruiter extends User {
     private String phone;
     private String avtUrl;
     private String backgroundUrl;
+    private boolean gender;
 
     @ManyToOne
     @JoinColumn(name = "company_id")

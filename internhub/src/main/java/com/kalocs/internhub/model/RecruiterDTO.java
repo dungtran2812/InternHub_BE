@@ -19,4 +19,5 @@ public class RecruiterDTO {
     private String avtUrl;
     private String backgroundUrl;
     private CompanyDTO company;
+    private boolean gender;
 }

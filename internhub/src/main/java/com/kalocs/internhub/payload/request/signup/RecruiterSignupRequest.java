@@ -15,4 +15,5 @@ public class RecruiterSignupRequest extends SignupRequest{
     private String address;
     private String phone;
     private UUID companyId;
+    private boolean gender;
 }
