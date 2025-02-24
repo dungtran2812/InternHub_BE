@@ -8,8 +8,11 @@ import com.kalocs.internhub.service.StudentService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
@@ -66,5 +69,14 @@ public class StudentController {
         log.info("deleteStudent() StudentController end");
         return check ? ResponseEntity.ok().body(ResponseMessage.builder().message("Xoá thành công").success(true).build())
                 : ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(ResponseMessage.builder().message("Xoá thất bại").success(false).build());
+    }
+
+    @PostMapping(value = "upload-cv", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasRole('STUDENT')")
+    public ResponseEntity<StudentDTO> uploadCV(@RequestParam("file") MultipartFile file) {
+        log.info("uploadCV() StudentController start |");
+        StudentDTO result = studentService.uploadCV(file);
+        log.info("uploadCV() StudentController end | {}", result);
+        return ResponseEntity.ok().body(result);
     }
 }

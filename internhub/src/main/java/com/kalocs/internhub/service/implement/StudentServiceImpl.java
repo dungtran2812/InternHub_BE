@@ -1,5 +1,6 @@
 package com.kalocs.internhub.service.implement;
 
+import com.cloudinary.utils.ObjectUtils;
 import com.kalocs.internhub.business.StudentBusiness;
 import com.kalocs.internhub.common.StudentStatus;
 import com.kalocs.internhub.common.UserRole;
@@ -8,12 +9,16 @@ import com.kalocs.internhub.entity.Student;
 import com.kalocs.internhub.model.StudentDTO;
 import com.kalocs.internhub.payload.request.StudentRequest;
 import com.kalocs.internhub.service.StudentService;
+import com.kalocs.internhub.utils.AuthUtils;
+import com.kalocs.internhub.utils.CloudinaryUtils;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -22,11 +27,13 @@ public class StudentServiceImpl implements StudentService {
 
     private final StudentBusiness studentBusiness;
     private final ModelMapper modelMapper;
+    private final CloudinaryUtils cloudinaryUtils;
 
     @Autowired
-    public StudentServiceImpl(StudentBusiness studentBusiness, ModelMapper modelMapper) {
+    public StudentServiceImpl(StudentBusiness studentBusiness, ModelMapper modelMapper, CloudinaryUtils cloudinaryUtils) {
         this.studentBusiness = studentBusiness;
         this.modelMapper = modelMapper;
+        this.cloudinaryUtils = cloudinaryUtils;
     }
 
     @Override
@@ -106,6 +113,34 @@ public class StudentServiceImpl implements StudentService {
             return result;
         } catch (Exception e) {
             log.error("deleteStudent() StudentServiceImpl error | {}", e.getMessage());
+            throw e;
+        }
+    }
+
+    @Override
+    public StudentDTO uploadCV(MultipartFile file) {
+        try {
+            log.info("uploadCV() StudentServiceImpl start |");
+            String fileExtension = file.getContentType();
+            if (!fileExtension.equals("application/pdf")) {
+                throw new AppException(415, "File không đúng định dạng");
+            }
+            Student student = studentBusiness.getById(AuthUtils.getCurrentUserId()).orElseThrow(() -> new AppException(404, "Không tìm thấy sinh viên"));
+            Map<String,Object> options = ObjectUtils.asMap(
+                    "folder", "cv",
+                    "public_id", student.getId().toString(),
+                    "overwrite", true
+            );
+            String url = cloudinaryUtils.uploadFile(file, options);
+            student.setResume(url);
+            if (student.getResume() == null) {
+                throw new AppException(400, "Lỗi khi upload file");
+            }
+            StudentDTO result = modelMapper.map(studentBusiness.update(student), StudentDTO.class);
+            log.info("uploadCV() StudentServiceImpl end | {}", result);
+            return result;
+        } catch (Exception e) {
+            log.error("uploadCV() StudentServiceImpl error | {}", e.getMessage());
             throw e;
         }
     }
