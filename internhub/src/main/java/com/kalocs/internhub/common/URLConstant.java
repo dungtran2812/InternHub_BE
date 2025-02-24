@@ -14,4 +14,5 @@ public class URLConstant {
     public static final String JOB_FUNCTION = "job-function";
     public static final String APPLICATION = "application";
     public static final String STUDENT = "student";
+    public static final String CLOUD = "cloud";
 }

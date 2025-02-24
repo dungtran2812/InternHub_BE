@@ -38,6 +38,7 @@ dependencies {
 
 	implementation 'org.modelmapper:modelmapper:3.2.2'
 
+	implementation 'com.cloudinary:cloudinary-http5:2.2.0'
 
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'org.postgresql:postgresql'
