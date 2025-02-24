@@ -16,14 +16,14 @@ public interface JobRepository extends JpaRepository<Job, UUID> {
     SELECT * FROM jobs j 
     WHERE (:industryId IS NULL OR j.industry_id = :industryId) 
       AND (:jobFunctionId IS NULL OR j.job_function_id = :jobFunctionId) 
-      AND (COALESCE(:jobTitle, '') = '' OR j.search_vector @@ to_tsquery('simple', unaccent(regexp_replace(:jobTitle, '\\s+', ' | ', 'g'))))
-    ORDER BY ts_rank(j.search_vector, to_tsquery('simple', unaccent(regexp_replace(:jobTitle, '\\s+', ' | ', 'g')))) DESC
+      AND (COALESCE(:jobTitle, '') = '' OR to_tsvector(unaccent(j.job_title || ' ' || j.description)) @@ to_tsquery('simple', unaccent(regexp_replace(:jobTitle, '\\s+', ' | ', 'g'))))
+    ORDER BY ts_rank(to_tsvector(unaccent(j.job_title || ' ' || j.description)), to_tsquery('simple', unaccent(regexp_replace(:jobTitle, '\\s+', ' | ', 'g')))) DESC
     """,
             countQuery = """
     SELECT COUNT(*) FROM jobs j 
     WHERE (:industryId IS NULL OR j.industry_id = :industryId) 
       AND (:jobFunctionId IS NULL OR j.job_function_id = :jobFunctionId) 
-      AND (COALESCE(:jobTitle, '') = '' OR j.search_vector @@ to_tsquery('simple', unaccent(regexp_replace(:jobTitle, '\\s+', ' | ', 'g'))))
+      AND (COALESCE(:jobTitle, '') = '' OR to_tsvector(unaccent(j.job_title || ' ' || j.description)) @@ to_tsquery('simple', unaccent(regexp_replace(:jobTitle, '\\s+', ' | ', 'g'))))
     """,
             nativeQuery = true)
     Page<Job> searchJobs(
