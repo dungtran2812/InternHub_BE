@@ -119,6 +119,7 @@ public class AuthServiceImpl implements AuthService {
             recruiter.setRole(UserRole.RECRUITER);
             recruiter.setPassword(passwordEncoder.encode(recruiterSignupRequest.getPassword()));
             recruiter.setUsername(recruiterSignupRequest.getEmail());
+            recruiter.setGender(recruiterSignupRequest.isGender());
             recruiter.setCompany(companyBusiness.getById(recruiterSignupRequest.getCompanyId()).orElseThrow(() -> {
                 log.error("Company not found");
                 return new AppException(404, "Company not found");
