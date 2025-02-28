@@ -1,19 +1,14 @@
 package com.kalocs.internhub.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class RecruiterDTO {
-    private String id;
-    private String fullName;
-    private String email;
+public class RecruiterDTO extends UserDTO {
     private String position;
     private String phone;
     private String avtUrl;

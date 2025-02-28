@@ -3,6 +3,7 @@ package com.kalocs.internhub.controller;
 import com.kalocs.internhub.common.URLConstant;
 import com.kalocs.internhub.model.RecruiterDTO;
 import com.kalocs.internhub.model.StudentDTO;
+import com.kalocs.internhub.model.UserDTO;
 import com.kalocs.internhub.payload.request.LoginRequest;
 import com.kalocs.internhub.payload.request.signup.RecruiterSignupRequest;
 import com.kalocs.internhub.payload.request.signup.StudentSignupRequest;
@@ -51,6 +52,14 @@ public class AuthController {
         JwtResponseModel jwt = authService.login(loginRequest);
         log.info("login() AuthController end | {}", jwt);
         return ResponseEntity.ok(jwt);
+    }
+
+    @GetMapping("get-info-by-token")
+    public ResponseEntity<UserDTO> getInfoByToken() {
+        log.info("getInfoByToken() AuthController start |");
+        UserDTO result = authService.getInfoByToken();
+        log.info("getInfoByToken() AuthController end | {}", result);
+        return ResponseEntity.ok(result);
     }
 
 
