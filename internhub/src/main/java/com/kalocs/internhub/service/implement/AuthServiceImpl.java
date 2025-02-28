@@ -18,6 +18,7 @@ import com.kalocs.internhub.payload.response.JwtResponseModel;
 import com.kalocs.internhub.repository.UserRepository;
 import com.kalocs.internhub.config.security.jwt.JwtUtils;
 import com.kalocs.internhub.service.AuthService;
+import com.kalocs.internhub.utils.AuthUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
@@ -75,7 +76,7 @@ public class AuthServiceImpl implements AuthService {
                     new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String jwt = jwtUtils.generateJwtToken(authentication);
-            UserDTO userDTO = modelMapper.map(user, UserDTO.class);
+            UserDTO userDTO = mapUser(user);
             log.debug("login() AuthServiceImpl End |");
             return new JwtResponseModel(jwt, "Bearer",userDTO);
         } catch (Exception ex) {
@@ -130,6 +131,31 @@ public class AuthServiceImpl implements AuthService {
         } catch (Exception e) {
             log.error("Error during create recruiter {}: {}", recruiterSignupRequest.getFullName(), e);
             throw e;
+        }
+    }
+
+    @Override
+    public UserDTO getInfoByToken() {
+        try {
+            log.debug("getInfoByToken() AuthServiceImpl Start |");
+            UUID userId = AuthUtils.getCurrentUserId();
+            User user = userRepository.findById(userId).orElseThrow(() -> new AppException(404, "Không tìm thấy người dùng"));
+            UserDTO result = mapUser(user);
+            log.debug("getInfoByToken() AuthServiceImpl End | {}", result);
+            return result;
+        } catch (Exception e) {
+            log.error("Error during get info by token: {}", e.getMessage());
+            throw e;
+        }
+    }
+
+    private UserDTO mapUser(User user){
+        if (user instanceof Student) {
+            return modelMapper.map(user, StudentDTO.class);
+        } else if (user instanceof Recruiter) {
+            return modelMapper.map(user, RecruiterDTO.class);
+        } else {
+            return modelMapper.map(user, UserDTO.class);
         }
     }
 }
