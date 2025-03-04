@@ -15,4 +15,5 @@ public class URLConstant {
     public static final String APPLICATION = "application";
     public static final String STUDENT = "student";
     public static final String CLOUD = "cloud";
+    public static final String PAYMENT = "payment";
 }
