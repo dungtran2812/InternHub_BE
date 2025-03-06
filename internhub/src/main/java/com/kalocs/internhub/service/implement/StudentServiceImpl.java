@@ -68,9 +68,14 @@ public class StudentServiceImpl implements StudentService {
             log.info("createStudent() StudentServiceImpl start | studentDTO: {}", student);
             Student newStudent = modelMapper.map(student, Student.class);
             newStudent.setId(UUID.randomUUID());
-            newStudent.setRole(UserRole.STUDENT);
             newStudent.setUsername(student.getEmail());
             newStudent.setStatus(StudentStatus.ACTIVE);
+            newStudent.setAvtUrl(student.getAvatarUrl());
+            newStudent.setFullName(student.getFullName());
+            newStudent.setPhone(student.getPhone());
+            newStudent.setGender(student.isGender());
+            newStudent.setMajor(student.getMajor());
+            newStudent.setGpa(student.getGpa());
             StudentDTO result = modelMapper.map(studentBusiness.create(newStudent), StudentDTO.class);
             log.info("createStudent() StudentServiceImpl end | {}", result);
             return result;
@@ -88,10 +93,14 @@ public class StudentServiceImpl implements StudentService {
                 throw new AppException(404, "Không tìm thấy sinh viên");
             }
             Student updateStudent = studentBusiness.getById(id).orElseThrow(() -> new AppException(404, "Không tìm thấy sinh viên"));
-            updateStudent.setId(id);
-            updateStudent.setRole(UserRole.STUDENT);
+            updateStudent.setAvtUrl(student.getAvatarUrl());
+            updateStudent.setFullName(student.getFullName());
+            updateStudent.setPhone(student.getPhone());
+            updateStudent.setGender(student.isGender());
+            updateStudent.setMajor(student.getMajor());
+            updateStudent.setGpa(student.getGpa());
+            updateStudent.setEmail(student.getEmail());
             updateStudent.setUsername(student.getEmail());
-            updateStudent.setStatus(StudentStatus.ACTIVE);
             StudentDTO result = modelMapper.map(studentBusiness.update(updateStudent), StudentDTO.class);
             log.info("updateStudent() StudentServiceImpl end | {}", result);
             return result;

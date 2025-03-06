@@ -12,12 +12,11 @@ import lombok.NoArgsConstructor;
 public class StudentRequest {
     @NotBlank
     private String fullName;
-    @NotBlank
-    private String password;
     @Email
-    @NotBlank
     private String email;
     private String phone;
     private boolean gender;
     private String major;
+    private String avatarUrl;
+    private double gpa;
 }
