@@ -3,11 +3,18 @@ package com.kalocs.internhub.service.implement;
 import com.kalocs.internhub.common.URLConstant;
 import com.kalocs.internhub.common.VNPayProps;
 import com.kalocs.internhub.config.VNPAYConfig;
+import com.kalocs.internhub.config.handler.AppException;
 import com.kalocs.internhub.service.PaymentService;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import vn.payos.PayOS;
+import vn.payos.type.CheckoutResponseData;
+import vn.payos.type.ItemData;
+import vn.payos.type.PaymentData;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -16,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Component
+@Log4j2
 public class PaymentServiceImpl implements PaymentService {
 
     @Value("${internhub.app.front-end-url}")
@@ -25,11 +33,13 @@ public class PaymentServiceImpl implements PaymentService {
     private final VNPayProps vnpayProps;
 
     private final VNPAYConfig vnpayConfig;
+    private final PayOS payOS;
 
     @Autowired
-    public PaymentServiceImpl(VNPayProps vnpayProps, VNPAYConfig vnpayConfig) {
+    public PaymentServiceImpl(VNPayProps vnpayProps, VNPAYConfig vnpayConfig, PayOS payOS) {
         this.vnpayProps = vnpayProps;
         this.vnpayConfig = vnpayConfig;
+        this.payOS = payOS;
     }
 
 
@@ -135,6 +145,24 @@ public class PaymentServiceImpl implements PaymentService {
             return String.format("%s/payment-redirect?code=%s",frontEndUrl,request.getParameter("vnp_TransactionStatus"));
         } else {
             return String.format("%s/payment-redirect?code=%s",frontEndUrl,"-1");
+        }
+    }
+
+    @Override
+    public String createPayOSLink(HttpServletRequest request, int price) {
+        try {
+            String currentTimeString = String.valueOf(String.valueOf(new Date().getTime()));
+            long orderCode = Long.parseLong(currentTimeString.substring(currentTimeString.length() - 6));
+
+
+            PaymentData paymentData = PaymentData.builder().orderCode(orderCode).description("Mua premium").amount(price)
+                    .returnUrl("http://localhost:8082/api/payment/payos-redirect").cancelUrl("http://localhost:8082/api/payment/cancel").build();
+
+            CheckoutResponseData data = payOS.createPaymentLink(paymentData);
+            return data.getCheckoutUrl();
+        } catch (Exception e) {
+            log.error("createPayOSLink() error: {}", e.getMessage());
+            throw new AppException(HttpStatus.NO_CONTENT.value(),"Lỗi tạo link thanh toán");
         }
     }
 }
