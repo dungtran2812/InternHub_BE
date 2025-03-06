@@ -40,6 +40,9 @@ dependencies {
 
 	implementation 'com.cloudinary:cloudinary-http5:2.2.0'
 
+	implementation 'vn.payos:payos-java:1.0.3'
+
+
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'org.postgresql:postgresql'
 	annotationProcessor 'org.projectlombok:lombok'
