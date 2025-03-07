@@ -70,7 +70,7 @@ public class StudentServiceImpl implements StudentService {
             newStudent.setId(UUID.randomUUID());
             newStudent.setUsername(student.getEmail());
             newStudent.setStatus(StudentStatus.ACTIVE);
-            newStudent.setAvtUrl(student.getAvatarUrl());
+            newStudent.setAvtUrl(student.getAvtrUrl());
             newStudent.setFullName(student.getFullName());
             newStudent.setPhone(student.getPhone());
             newStudent.setGender(student.isGender());
@@ -93,7 +93,7 @@ public class StudentServiceImpl implements StudentService {
                 throw new AppException(404, "Không tìm thấy sinh viên");
             }
             Student updateStudent = studentBusiness.getById(id).orElseThrow(() -> new AppException(404, "Không tìm thấy sinh viên"));
-            updateStudent.setAvtUrl(student.getAvatarUrl());
+            updateStudent.setAvtUrl(student.getAvtrUrl());
             updateStudent.setFullName(student.getFullName());
             updateStudent.setPhone(student.getPhone());
             updateStudent.setGender(student.isGender());
