@@ -17,6 +17,6 @@ public class StudentRequest {
     private String phone;
     private boolean gender;
     private String major;
-    private String avtrUrl;
+    private String avtUrl;
     private double gpa;
 }
