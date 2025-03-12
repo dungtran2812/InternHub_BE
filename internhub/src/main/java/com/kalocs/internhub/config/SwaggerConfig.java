@@ -21,6 +21,8 @@ public class SwaggerConfig {
     private String baseURL;
     @Value("${server.servlet.context-path}")
     private String contextPath;
+    @Value("${internhub.app.backend-server-url}")
+    private String productionURL;
 
     @Bean
     public OpenAPI myOpenAPI() {
@@ -30,7 +32,7 @@ public class SwaggerConfig {
         devServer.setUrl("http://localhost:" + baseURL + contextPath);
         devServer.setDescription("Server URL in Development environment");
 
-        prodServer.setUrl("https://internhubbe-production.up.railway.app" + contextPath);
+        prodServer.setUrl(productionURL);
         prodServer.setDescription("Server URL in Production environment");
 
         Contact myContact = new Contact();
