@@ -1,6 +1,7 @@
 package com.kalocs.internhub.service;
 
 import com.kalocs.internhub.model.JobDTO;
+import com.kalocs.internhub.payload.request.CreateJobRequest;
 import com.kalocs.internhub.payload.request.JobRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,4 +22,6 @@ public interface JobService {
     boolean deleteJob(UUID id);
 
     Page<JobDTO> searchJob(String searchText, String jobFunctionId, String industryId, Pageable pageable);
+
+    JobDTO createJob(CreateJobRequest jobRequest);
 }
