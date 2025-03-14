@@ -3,12 +3,15 @@ package com.kalocs.internhub.controller;
 import com.kalocs.internhub.common.URLConstant;
 import com.kalocs.internhub.model.ApplicationDTO;
 import com.kalocs.internhub.payload.request.ApplicationRequest;
+import com.kalocs.internhub.payload.request.ApplyJobRequest;
 import com.kalocs.internhub.payload.response.ResponseMessage;
 import com.kalocs.internhub.service.ApplicationService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -68,6 +71,16 @@ public class ApplicationController {
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(new ResponseMessage(false,"Không thể xóa"));
         }
         return ResponseEntity.ok().body(ResponseMessage.builder().message("Xóa thành công").success(true).build());
+    }
+
+    @PostMapping("apply-job")
+    @PreAuthorize("hasRole('STUDENT')")
+    @Operation(summary = "Apply job", description = "Student apply job")
+    public ResponseEntity<ApplicationDTO> applyJob(@RequestBody ApplyJobRequest applicationRequest) {
+        log.info("applyJob() ApplicationController start | applicationRequest: {}", applicationRequest);
+        ApplicationDTO applyJob = applicationService.applyJob(applicationRequest);
+        log.info("applyJob() ApplicationController end | applicationRequest: {}", applicationRequest);
+        return ResponseEntity.ok().body(applyJob);
     }
 
 }
