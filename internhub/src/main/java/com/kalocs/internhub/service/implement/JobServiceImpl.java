@@ -1,17 +1,13 @@
 package com.kalocs.internhub.service.implement;
 
-import com.kalocs.internhub.business.CompanyBusiness;
-import com.kalocs.internhub.business.IndustryBusiness;
-import com.kalocs.internhub.business.JobBusiness;
-import com.kalocs.internhub.business.JobFunctionBusiness;
+import com.kalocs.internhub.business.*;
 import com.kalocs.internhub.config.handler.AppException;
-import com.kalocs.internhub.entity.Company;
-import com.kalocs.internhub.entity.Industry;
-import com.kalocs.internhub.entity.Job;
-import com.kalocs.internhub.entity.JobFunction;
+import com.kalocs.internhub.entity.*;
 import com.kalocs.internhub.model.JobDTO;
+import com.kalocs.internhub.payload.request.CreateJobRequest;
 import com.kalocs.internhub.payload.request.JobRequest;
 import com.kalocs.internhub.service.JobService;
+import com.kalocs.internhub.utils.AuthUtils;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,14 +27,16 @@ public class JobServiceImpl implements JobService {
     private final CompanyBusiness companyBusiness;
     private final IndustryBusiness industryBusiness;
     private final JobFunctionBusiness jobFunctionBusiness;
+    private final RecruiterBusiness recruiterBusiness;
     private final ModelMapper modelMapper;
 
     @Autowired
-    public JobServiceImpl(JobBusiness jobBusiness, CompanyBusiness companyBusiness, IndustryBusiness industryBusiness, JobFunctionBusiness jobFunctionBusiness, ModelMapper modelMapper) {
+    public JobServiceImpl(JobBusiness jobBusiness, CompanyBusiness companyBusiness, IndustryBusiness industryBusiness, JobFunctionBusiness jobFunctionBusiness, RecruiterBusiness recruiterBusiness, ModelMapper modelMapper) {
         this.jobBusiness = jobBusiness;
         this.companyBusiness = companyBusiness;
         this.industryBusiness = industryBusiness;
         this.jobFunctionBusiness = jobFunctionBusiness;
+        this.recruiterBusiness = recruiterBusiness;
         this.modelMapper = modelMapper;
     }
 
@@ -164,6 +162,32 @@ public class JobServiceImpl implements JobService {
             return result;
         } catch (Exception e) {
             log.error("searchJob() JobServiceImpl error | {}", e.getMessage());
+            throw e;
+        }
+    }
+
+    @Override
+    public JobDTO createJob(CreateJobRequest jobRequest) {
+        try {
+            log.debug("createJob() JobServiceImpl by recruiter start | jobRequest: {}", jobRequest);
+            Job jobToCreate = modelMapper.map(jobRequest, Job.class);
+            jobToCreate.setId(UUID.randomUUID());
+            // Get Company from recruiter
+            Recruiter recruiter = recruiterBusiness.getRecruiter(AuthUtils.getCurrentUserId());
+            jobToCreate.setCompany(recruiter.getCompany());
+            // Check if industry exists) {
+            Industry industry = industryBusiness.getById(jobRequest.getIndustryId()).orElseThrow(() -> new AppException(404, "Không tìm thấy lĩnh vực đã chọn"));
+            jobToCreate.setIndustry(industry);
+
+            // Check if job function exists
+            JobFunction jobFunction = jobFunctionBusiness.getById(jobRequest.getJobFunctionId()).orElseThrow(() -> new AppException(404, "Không tìm thấy ngành nghề đã chọn"));
+            jobToCreate.setJobFunction(jobFunction);
+
+            JobDTO createdJob = modelMapper.map(jobBusiness.create(jobToCreate), JobDTO.class);
+            log.debug("createJob() JobServiceImpl by recruiter end | {}", createdJob);
+            return createdJob;
+        } catch (Exception e) {
+            log.error("createJob() JobServiceImpl by recruiter error | {}", e.getMessage());
             throw e;
         }
     }

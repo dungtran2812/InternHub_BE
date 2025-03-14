@@ -2,8 +2,11 @@ package com.kalocs.internhub.controller;
 
 import com.kalocs.internhub.common.URLConstant;
 import com.kalocs.internhub.model.JobDTO;
+import com.kalocs.internhub.payload.request.CreateJobRequest;
 import com.kalocs.internhub.payload.request.JobRequest;
 import com.kalocs.internhub.service.JobService;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.annotation.Nullable;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -82,6 +86,16 @@ public class JobController {
             log.info("deleteJob() JobController end | Not found");
             return ResponseEntity.ok().body("Job not found");
         }
+    }
+
+    @PostMapping("create")
+    @Operation(summary = "Create job", description = "Recruiter creates job")
+    @PreAuthorize("hasRole('RECRUITER')")
+    public ResponseEntity<JobDTO> createJob(@RequestBody CreateJobRequest jobRequest) {
+        log.info("createJob() JobController by recruiter start | jobRequest: {}", jobRequest);
+        JobDTO job = jobService.createJob(jobRequest);
+        log.info("createJob() JobController by recruiter end | {}", job);
+        return ResponseEntity.ok().body(job);
     }
 
 }
