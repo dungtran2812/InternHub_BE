@@ -10,7 +10,9 @@ import com.kalocs.internhub.entity.Job;
 import com.kalocs.internhub.entity.Student;
 import com.kalocs.internhub.model.ApplicationDTO;
 import com.kalocs.internhub.payload.request.ApplicationRequest;
+import com.kalocs.internhub.payload.request.ApplyJobRequest;
 import com.kalocs.internhub.service.ApplicationService;
+import com.kalocs.internhub.utils.AuthUtils;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -126,6 +128,30 @@ public class ApplicationServiceImpl implements ApplicationService {
             return true;
         } catch (Exception e) {
             log.error("deleteApplication() ApplicationServiceImpl error | {}", e.getMessage());
+            throw e;
+        }
+    }
+
+    @Override
+    public ApplicationDTO applyJob(ApplyJobRequest applicationRequest) {
+        try {
+            log.debug("applyJob() ApplicationServiceImpl start | applicationRequest: {}", applicationRequest);
+            Student student = studentBusiness.getById(AuthUtils.getCurrentUserId()).orElseThrow(() ->
+                    new AppException(404, "Không tìm thấy sinh viên"));
+            Job job = jobBusiness.getById(UUID.fromString(applicationRequest.getJobId())).orElseThrow(() ->new AppException(404, "Không tìm thấy công việc"));
+            Application newApplication = new Application();
+            newApplication.setStudent(student);
+            newApplication.setJob(job);
+            newApplication.setId(UUID.randomUUID());
+            newApplication.setResume(student.getResume());
+            newApplication.setCoverLetter(applicationRequest.getCoverLetter());
+            newApplication.setDate(Instant.now().toEpochMilli());
+            newApplication.setStatus(ApplicationStatus.PENDING);
+            ApplicationDTO result = modelMapper.map(applicationBusiness.create(newApplication), ApplicationDTO.class);
+            log.debug("applyJob() ApplicationServiceImpl end | {}", result);
+            return result;
+        } catch (Exception e) {
+            log.error("applyJob() ApplicationServiceImpl error | {}", e.getMessage());
             throw e;
         }
     }
