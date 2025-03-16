@@ -83,4 +83,14 @@ public class ApplicationController {
         return ResponseEntity.ok().body(applyJob);
     }
 
+    @PatchMapping("{id}/approve")
+    @PreAuthorize("hasRole('RECRUITER')")
+    @Operation(summary = "Update application status", description = "Recruiter update application status")
+    public ResponseEntity<ApplicationDTO> updateApplicationStatus(@PathVariable String id) {
+        log.info("updateApplicationStatus() ApplicationController start | id: {}", id);
+        ApplicationDTO result = applicationService.approveApplication(id);
+        log.info("updateApplicationStatus() ApplicationController end | {}", result);
+        return ResponseEntity.ok().body(result);
+    }
+
 }

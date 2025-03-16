@@ -19,4 +19,6 @@ public interface ApplicationService {
     boolean deleteApplication(UUID id);
 
     ApplicationDTO applyJob(ApplyJobRequest applicationRequest);
+
+    ApplicationDTO approveApplication(String id);
 }
