@@ -2,11 +2,13 @@ package com.kalocs.internhub.service.implement;
 
 import com.kalocs.internhub.business.ApplicationBusiness;
 import com.kalocs.internhub.business.JobBusiness;
+import com.kalocs.internhub.business.RecruiterBusiness;
 import com.kalocs.internhub.business.StudentBusiness;
 import com.kalocs.internhub.common.ApplicationStatus;
 import com.kalocs.internhub.config.handler.AppException;
 import com.kalocs.internhub.entity.Application;
 import com.kalocs.internhub.entity.Job;
+import com.kalocs.internhub.entity.Recruiter;
 import com.kalocs.internhub.entity.Student;
 import com.kalocs.internhub.model.ApplicationDTO;
 import com.kalocs.internhub.payload.request.ApplicationRequest;
@@ -16,6 +18,11 @@ import com.kalocs.internhub.utils.AuthUtils;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
@@ -29,13 +36,15 @@ public class ApplicationServiceImpl implements ApplicationService {
     private final ApplicationBusiness applicationBusiness;
     private final StudentBusiness studentBusiness;
     private final JobBusiness jobBusiness;
+    private final RecruiterBusiness recruiterBusiness;
     private final ModelMapper modelMapper;
 
     @Autowired
-    public ApplicationServiceImpl(ApplicationBusiness applicationBusiness, StudentBusiness studentBusiness, JobBusiness jobBusiness, ModelMapper modelMapper) {
+    public ApplicationServiceImpl(ApplicationBusiness applicationBusiness, StudentBusiness studentBusiness, JobBusiness jobBusiness, RecruiterBusiness recruiterBusiness, ModelMapper modelMapper) {
         this.applicationBusiness = applicationBusiness;
         this.studentBusiness = studentBusiness;
         this.jobBusiness = jobBusiness;
+        this.recruiterBusiness = recruiterBusiness;
         this.modelMapper = modelMapper;
     }
 
@@ -143,7 +152,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             newApplication.setStudent(student);
             newApplication.setJob(job);
             newApplication.setId(UUID.randomUUID());
-            newApplication.setResume(student.getResume());
+            newApplication.setResume(applicationRequest.getResume());
             newApplication.setCoverLetter(applicationRequest.getCoverLetter());
             newApplication.setDate(Instant.now().toEpochMilli());
             newApplication.setStatus(ApplicationStatus.PENDING);
@@ -152,6 +161,89 @@ public class ApplicationServiceImpl implements ApplicationService {
             return result;
         } catch (Exception e) {
             log.error("applyJob() ApplicationServiceImpl error | {}", e.getMessage());
+            throw e;
+        }
+    }
+
+    @Override
+    public ApplicationDTO approveApplication(String id) {
+        try {
+            log.debug("approveApplication() ApplicationServiceImpl start | id: {}", id);
+            Application application = applicationBusiness.getById(UUID.fromString(id)).orElseThrow(() ->
+                    new AppException(404, "Không tìm thấy ứng tuyển"));
+            Recruiter recruiter = recruiterBusiness.getRecruiter(AuthUtils.getCurrentUserId());
+            if (recruiter == null) {
+                throw new AppException(404, "Không tìm thấy nhà tuyển dụng");
+            }
+            if (!application.getJob().getCompany().getId().equals(recruiter.getCompany().getId())) {
+                throw new AppException(HttpStatus.FORBIDDEN.value(), "Không thể duyệt ứng tuyển của công ty khác");
+            }
+            application.setStatus(ApplicationStatus.ACCEPT);
+            ApplicationDTO result = modelMapper.map(applicationBusiness.update(application), ApplicationDTO.class);
+            log.debug("approveApplication() ApplicationServiceImpl end | {}", result);
+            return result;
+        } catch (Exception e) {
+            log.error("approveApplication() ApplicationServiceImpl error | {}", e.getMessage());
+            throw e;
+        }
+    }
+
+    @Override
+    public Page<ApplicationDTO> getApplicationByRecruiter(int page, int pageSize, String order) {
+        try {
+            log.debug("getApplicationByRecruiter() ApplicationServiceImpl start");
+            Recruiter recruiter = recruiterBusiness.getRecruiter(AuthUtils.getCurrentUserId());
+            if (recruiter == null) {
+                throw new AppException(404, "Không tìm thấy nhà tuyển dụng");
+            }
+            Pageable pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.fromString(order), "createdDate"));
+            Page<Application> result = applicationBusiness.getByComapnyId(recruiter.getCompany().getId(), pageable);
+            Page<ApplicationDTO> resultDTO = result.map(application -> modelMapper.map(application, ApplicationDTO.class));
+            log.debug("getApplicationByRecruiter() ApplicationServiceImpl end | {}", result);
+            return resultDTO;
+        } catch (Exception e) {
+            log.error("getApplicationByRecruiter() ApplicationServiceImpl error | {}", e.getMessage());
+            throw e;
+        }
+    }
+
+    @Override
+    public Page<ApplicationDTO> getApplicationByStudent(int page, int pageSize, String order) {
+        try {
+            log.debug("getApplicationByStudent() ApplicationServiceImpl start");
+            Pageable pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.fromString(order), "createdDate"));
+            Page<Application> result = applicationBusiness.getByStudentId(AuthUtils.getCurrentUserId(), pageable);
+            Page<ApplicationDTO> resultDTO = result.map(application -> modelMapper.map(application, ApplicationDTO.class));
+            log.debug("getApplicationByStudent() ApplicationServiceImpl end | {}", result);
+            return resultDTO;
+        } catch (Exception e) {
+            log.error("getApplicationByStudent() ApplicationServiceImpl error | {}", e.getMessage());
+            throw e;
+        }
+    }
+
+    @Override
+    public boolean deleteApplicationByStudent(UUID id) {
+        try {
+            log.debug("deleteApplicationByStudent() ApplicationServiceImpl start | id: {}", id);
+            if (!applicationBusiness.existsById(id)) {
+                throw new AppException(404, "Không tìm thấy ứng tuyển");
+            }
+            Student student = studentBusiness.getById(AuthUtils.getCurrentUserId()).orElseThrow(() ->
+                    new AppException(404, "Không tìm thấy sinh viên"));
+            Application application = applicationBusiness.getById(id).orElseThrow(() ->
+                    new AppException(404, "Không tìm thấy đơn ứng tuyển"));
+            if (!student.getId().equals(application.getStudent().getId())) {
+                throw new AppException(HttpStatus.FORBIDDEN.value(), "Không thể xóa đơn ứng tuyển của người khác");
+            }
+            if (application.getStatus().equals(ApplicationStatus.ACCEPT)) {
+                throw new AppException(HttpStatus.FORBIDDEN.value(), "Không thể xóa đơn ứng tuyển đã được duyệt");
+            }
+            applicationBusiness.delete(id);
+            log.debug("deleteApplicationByStudent() ApplicationServiceImpl end | id: {}", id);
+            return !applicationBusiness.existsById(id);
+        } catch (Exception e) {
+            log.error("deleteApplicationByStudent() ApplicationServiceImpl error | {}", e.getMessage());
             throw e;
         }
     }

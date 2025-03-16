@@ -21,12 +21,12 @@ public class UserBusinessImpl implements UserBusiness {
 
     @Override
     public User getUserByEmail(String email) {
-        return userRepository.findByEmail(email);
+        return userRepository.findByEmailIgnoreCase(email).orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
     }
 
     @Override
     public User login(LoginRequest loginRequest) {
-        User user = userRepository.findByUsername(loginRequest.getEmail()).orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
+        User user = userRepository.findByEmailIgnoreCase(loginRequest.getEmail()).orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
         if (!user.getPassword().equals(loginRequest.getPassword())) {
             throw new BadCredentialsException("Wrong Password");
         }
@@ -35,6 +35,6 @@ public class UserBusinessImpl implements UserBusiness {
 
     @Override
     public boolean existsByEmail(String email) {
-        return userRepository.existsByEmail(email);
+        return userRepository.existsByEmailIgnoreCase(email);
     }
 }

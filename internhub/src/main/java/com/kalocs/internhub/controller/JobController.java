@@ -98,4 +98,14 @@ public class JobController {
         return ResponseEntity.ok().body(job);
     }
 
+    @PostMapping("edit/{id}")
+    @Operation(summary = "Update job", description = "Recruiter updates job")
+    @PreAuthorize("hasRole('RECRUITER')")
+    public ResponseEntity<JobDTO> editJob(@RequestBody CreateJobRequest jobRequest, @PathVariable String id) {
+        log.info("editJob() JobController by recruiter start | jobRequest: {}", jobRequest);
+        JobDTO job = jobService.editJob(jobRequest, id);
+        log.info("editJob() JobController by recruiter end | {}", job);
+        return ResponseEntity.ok().body(job);
+    }
+
 }

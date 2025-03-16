@@ -175,7 +175,7 @@ public class JobServiceImpl implements JobService {
             // Get Company from recruiter
             Recruiter recruiter = recruiterBusiness.getRecruiter(AuthUtils.getCurrentUserId());
             jobToCreate.setCompany(recruiter.getCompany());
-            // Check if industry exists) {
+            // Check if industry exists
             Industry industry = industryBusiness.getById(jobRequest.getIndustryId()).orElseThrow(() -> new AppException(404, "Không tìm thấy lĩnh vực đã chọn"));
             jobToCreate.setIndustry(industry);
 
@@ -188,6 +188,35 @@ public class JobServiceImpl implements JobService {
             return createdJob;
         } catch (Exception e) {
             log.error("createJob() JobServiceImpl by recruiter error | {}", e.getMessage());
+            throw e;
+        }
+    }
+
+    @Override
+    public JobDTO editJob(CreateJobRequest jobRequest, String id) {
+        try {
+            log.debug("editJob() JobServiceImpl by recruiter start | jobRequest: {}", jobRequest);
+
+            Recruiter recruiter = recruiterBusiness.getRecruiter(AuthUtils.getCurrentUserId());
+            Job jobToUpdate = jobBusiness.getById(UUID.fromString(id)).orElseThrow(() -> new AppException(404, "Không tìm thấy việc làm"));
+            if (!recruiter.getCompany().getId().equals(jobToUpdate.getCompany().getId())) {
+                throw new AppException(403, "Không thể chỉnh sửa công việc của công ty khác");
+            }
+            jobToUpdate.setJobFunction(jobFunctionBusiness.getById(jobRequest.getJobFunctionId()).orElseThrow(() -> new AppException(404, "Không tìm thấy ngành nghề đã chọn")));
+            jobToUpdate.setIndustry(industryBusiness.getById(jobRequest.getIndustryId()).orElseThrow(() -> new AppException(404, "Không tìm thấy lĩnh vực đã chọn")));
+            jobToUpdate.setJobTitle(jobRequest.getJobTitle());
+            jobToUpdate.setDescription(jobRequest.getDescription());
+            jobToUpdate.setRequirement(jobRequest.getRequirement());
+            jobToUpdate.setSalary(jobRequest.getSalary());
+            jobToUpdate.setDuration(jobRequest.getDuration());
+            jobToUpdate.setQuantity(jobRequest.getQuantity());
+            jobToUpdate.setLocation(jobRequest.getLocation());
+            jobToUpdate.setStatus(jobRequest.getStatus());
+            JobDTO updatedJob = modelMapper.map(jobBusiness.update(jobToUpdate), JobDTO.class);
+            log.debug("editJob() JobServiceImpl by recruiter end | {}", updatedJob);
+            return updatedJob;
+        } catch (Exception e) {
+            log.error("editJob() JobServiceImpl by recruiter error | {}", e.getMessage());
             throw e;
         }
     }

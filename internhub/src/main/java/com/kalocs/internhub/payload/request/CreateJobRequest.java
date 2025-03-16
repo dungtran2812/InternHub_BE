@@ -18,6 +18,7 @@ public class CreateJobRequest {
     private String duration;
     private int quantity;
     private String location;
+    private String salary;
     private JobStatus status;
     private int jobFunctionId;
     private int industryId;
