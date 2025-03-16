@@ -24,4 +24,6 @@ public interface JobService {
     Page<JobDTO> searchJob(String searchText, String jobFunctionId, String industryId, Pageable pageable);
 
     JobDTO createJob(CreateJobRequest jobRequest);
+
+    JobDTO editJob(CreateJobRequest jobRequest, String id);
 }
