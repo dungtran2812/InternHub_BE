@@ -24,4 +24,6 @@ public interface ApplicationService {
     ApplicationDTO approveApplication(String id);
 
     Page<ApplicationDTO> getApplicationByRecruiter(int page, int pageSize, String order);
+
+    Page<ApplicationDTO> getApplicationByStudent(int page, int pageSize, String order);
 }

@@ -31,4 +31,17 @@ public class ApplicationBusinessImpl extends BaseBusinessImpl<Application, Appli
             throw e;
         }
     }
+
+    @Override
+    public Page<Application> getByStudentId(UUID studentId, Pageable pageable) {
+        try {
+            log.debug("getByStudentId() ApplicationBusinessImpl start | currentUserId: {}", studentId);
+            Page<Application> result = repository.findByStudentId(studentId, pageable);
+            log.debug("getByStudentId() ApplicationBusinessImpl end | {}", result);
+            return result;
+        } catch (Exception e) {
+            log.error("getByStudentId() ApplicationBusinessImpl error | {}", e.getMessage());
+            throw e;
+        }
+    }
 }

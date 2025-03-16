@@ -206,4 +206,19 @@ public class ApplicationServiceImpl implements ApplicationService {
             throw e;
         }
     }
+
+    @Override
+    public Page<ApplicationDTO> getApplicationByStudent(int page, int pageSize, String order) {
+        try {
+            log.debug("getApplicationByStudent() ApplicationServiceImpl start");
+            Pageable pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.fromString(order), "createdDate"));
+            Page<Application> result = applicationBusiness.getByStudentId(AuthUtils.getCurrentUserId(), pageable);
+            Page<ApplicationDTO> resultDTO = result.map(application -> modelMapper.map(application, ApplicationDTO.class));
+            log.debug("getApplicationByStudent() ApplicationServiceImpl end | {}", result);
+            return resultDTO;
+        } catch (Exception e) {
+            log.error("getApplicationByStudent() ApplicationServiceImpl error | {}", e.getMessage());
+            throw e;
+        }
+    }
 }

@@ -106,4 +106,17 @@ public class ApplicationController {
         return ResponseEntity.ok().body(result);
     }
 
+    //Student get application
+    @GetMapping("student-get-application")
+    @PreAuthorize("hasRole('STUDENT')")
+    @Operation(summary = "Get application by student", description = "Student get application by student")
+    public ResponseEntity<Page<ApplicationDTO>> getApplicationByStudent(@RequestParam(defaultValue = "0") int page,
+                                                                      @RequestParam(defaultValue = "10") int pageSize,
+                                                                      @RequestParam(defaultValue = "0") String order) {
+        log.info("getApplicationByStudent() ApplicationController start");
+        Page<ApplicationDTO> result = applicationService.getApplicationByStudent(page, pageSize, order);
+        log.info("getApplicationByStudent() ApplicationController end | {}", result);
+        return ResponseEntity.ok().body(result);
+    }
+
 }

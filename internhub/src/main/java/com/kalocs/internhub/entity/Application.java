@@ -5,7 +5,10 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.Instant;
 import java.util.UUID;
 
 @Entity
@@ -13,6 +16,7 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 public class Application {
     @Id
     private UUID id;
@@ -22,6 +26,7 @@ public class Application {
     private String coverLetter;
 
     @Column(nullable = true)
+    @CreatedDate
     private long createdDate;
     @Column(nullable = true)
     private long updatedDate;
@@ -34,4 +39,14 @@ public class Application {
     @JoinColumn(name = "job_id")
     private Job job;
 
+    @PrePersist
+    protected void onCreate() {
+        this.createdDate = Instant.now().toEpochMilli();
+        this.updatedDate = Instant.now().toEpochMilli();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedDate = Instant.now().toEpochMilli();
+    }
 }

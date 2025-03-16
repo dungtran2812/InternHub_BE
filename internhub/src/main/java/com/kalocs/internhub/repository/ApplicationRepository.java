@@ -14,4 +14,6 @@ public interface ApplicationRepository extends JpaRepository<Application, UUID> 
 
     @Query("SELECT a FROM Application a WHERE a.job.company.id = :id")
     Page<Application> findByCompanyId(UUID id, Pageable pageable);
+
+    Page<Application> findByStudentId(UUID studentId, Pageable pageable);
 }
