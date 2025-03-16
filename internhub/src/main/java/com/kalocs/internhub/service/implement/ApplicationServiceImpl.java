@@ -18,6 +18,10 @@ import com.kalocs.internhub.utils.AuthUtils;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
@@ -180,6 +184,25 @@ public class ApplicationServiceImpl implements ApplicationService {
             return result;
         } catch (Exception e) {
             log.error("approveApplication() ApplicationServiceImpl error | {}", e.getMessage());
+            throw e;
+        }
+    }
+
+    @Override
+    public Page<ApplicationDTO> getApplicationByRecruiter(int page, int pageSize, String order) {
+        try {
+            log.debug("getApplicationByRecruiter() ApplicationServiceImpl start");
+            Recruiter recruiter = recruiterBusiness.getRecruiter(AuthUtils.getCurrentUserId());
+            if (recruiter == null) {
+                throw new AppException(404, "Không tìm thấy nhà tuyển dụng");
+            }
+            Pageable pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.fromString(order), "createdDate"));
+            Page<Application> result = applicationBusiness.getByComapnyId(recruiter.getCompany().getId(), pageable);
+            Page<ApplicationDTO> resultDTO = result.map(application -> modelMapper.map(application, ApplicationDTO.class));
+            log.debug("getApplicationByRecruiter() ApplicationServiceImpl end | {}", result);
+            return resultDTO;
+        } catch (Exception e) {
+            log.error("getApplicationByRecruiter() ApplicationServiceImpl error | {}", e.getMessage());
             throw e;
         }
     }

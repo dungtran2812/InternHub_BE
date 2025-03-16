@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigInteger;
 import java.util.UUID;
 
 @Entity
@@ -21,6 +20,11 @@ public class Application {
     private ApplicationStatus status;
     private String resume;
     private String coverLetter;
+
+    @Column(nullable = true)
+    private long createdDate;
+    @Column(nullable = true)
+    private long updatedDate;
 
     @ManyToOne
     @JoinColumn(name = "student_id")

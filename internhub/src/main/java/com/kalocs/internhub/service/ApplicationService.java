@@ -3,6 +3,7 @@ package com.kalocs.internhub.service;
 import com.kalocs.internhub.model.ApplicationDTO;
 import com.kalocs.internhub.payload.request.ApplicationRequest;
 import com.kalocs.internhub.payload.request.ApplyJobRequest;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 import java.util.UUID;
@@ -21,4 +22,6 @@ public interface ApplicationService {
     ApplicationDTO applyJob(ApplyJobRequest applicationRequest);
 
     ApplicationDTO approveApplication(String id);
+
+    Page<ApplicationDTO> getApplicationByRecruiter(int page, int pageSize, String order);
 }
