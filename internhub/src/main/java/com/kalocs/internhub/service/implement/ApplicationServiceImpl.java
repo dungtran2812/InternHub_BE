@@ -221,4 +221,30 @@ public class ApplicationServiceImpl implements ApplicationService {
             throw e;
         }
     }
+
+    @Override
+    public boolean deleteApplicationByStudent(UUID id) {
+        try {
+            log.debug("deleteApplicationByStudent() ApplicationServiceImpl start | id: {}", id);
+            if (!applicationBusiness.existsById(id)) {
+                throw new AppException(404, "Không tìm thấy ứng tuyển");
+            }
+            Student student = studentBusiness.getById(AuthUtils.getCurrentUserId()).orElseThrow(() ->
+                    new AppException(404, "Không tìm thấy sinh viên"));
+            Application application = applicationBusiness.getById(id).orElseThrow(() ->
+                    new AppException(404, "Không tìm thấy đơn ứng tuyển"));
+            if (!student.getId().equals(application.getStudent().getId())) {
+                throw new AppException(HttpStatus.FORBIDDEN.value(), "Không thể xóa đơn ứng tuyển của người khác");
+            }
+            if (application.getStatus().equals(ApplicationStatus.ACCEPT)) {
+                throw new AppException(HttpStatus.FORBIDDEN.value(), "Không thể xóa đơn ứng tuyển đã được duyệt");
+            }
+            applicationBusiness.delete(id);
+            log.debug("deleteApplicationByStudent() ApplicationServiceImpl end | id: {}", id);
+            return !applicationBusiness.existsById(id);
+        } catch (Exception e) {
+            log.error("deleteApplicationByStudent() ApplicationServiceImpl error | {}", e.getMessage());
+            throw e;
+        }
+    }
 }

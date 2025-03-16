@@ -119,4 +119,17 @@ public class ApplicationController {
         return ResponseEntity.ok().body(result);
     }
 
+    //Student delete application
+    @DeleteMapping("student-delete-application/{id}")
+    @PreAuthorize("hasRole('STUDENT')")
+    @Operation(summary = "Delete application by student", description = "Student delete application by student")
+    public ResponseEntity<ResponseMessage> deleteApplicationByStudent(@PathVariable UUID id) {
+        log.info("deleteApplicationByStudent() ApplicationController start | id: {}", id);
+        boolean check = applicationService.deleteApplicationByStudent(id);
+        log.info("deleteApplicationByStudent() ApplicationController end | id: {}", id);
+        if (!check) {
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(new ResponseMessage(false,"Không thể xóa"));
+        }
+        return ResponseEntity.ok().body(ResponseMessage.builder().message("Xóa thành công").success(true).build());
+    }
 }

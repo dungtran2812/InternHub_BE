@@ -26,4 +26,6 @@ public interface ApplicationService {
     Page<ApplicationDTO> getApplicationByRecruiter(int page, int pageSize, String order);
 
     Page<ApplicationDTO> getApplicationByStudent(int page, int pageSize, String order);
+
+    boolean deleteApplicationByStudent(UUID id);
 }
