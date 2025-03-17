@@ -109,8 +109,8 @@ public class PremiumServiceImpl implements PremiumService {
             if (transaction.getStatus().equals(PaymentStatus.SUCCESSFUL)) {
                 return true;
             }
-            //UUID premiumPlanId = UUID.fromString(cacheService.get(String.valueOf(orderCode)));
-            PremiumPlan premiumPlan = premiumPlanBusiness.getById(UUID.fromString("be86dd00-a91a-4cc6-9175-cfc145173ed5")).orElseThrow(() -> new AppException(404, "Không tìm thấy gói premium"));
+            UUID premiumPlanId = UUID.fromString(cacheService.get(String.valueOf(orderCode)));
+            PremiumPlan premiumPlan = premiumPlanBusiness.getById(premiumPlanId).orElseThrow(() -> new AppException(404, "Không tìm thấy gói premium"));
             if (transaction.getStatus().equals(PaymentStatus.PENDING)) {
                 transaction.setStatus(PaymentStatus.SUCCESSFUL);
                 transactionBusiness.update(transaction);
