@@ -1,5 +1,6 @@
 package com.kalocs.internhub.entity;
 
+import com.kalocs.internhub.common.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -32,5 +33,5 @@ public class Transaction {
 
     private String description;
 
-    private boolean isSuccessful;
+    private PaymentStatus status;
 }

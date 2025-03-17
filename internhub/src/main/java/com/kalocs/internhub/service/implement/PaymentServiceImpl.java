@@ -4,7 +4,9 @@ import com.kalocs.internhub.common.URLConstant;
 import com.kalocs.internhub.common.VNPayProps;
 import com.kalocs.internhub.config.VNPAYConfig;
 import com.kalocs.internhub.config.handler.AppException;
+import com.kalocs.internhub.config.security.services.UserDetailsImpl;
 import com.kalocs.internhub.service.PaymentService;
+import com.kalocs.internhub.utils.AuthUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -162,6 +164,37 @@ public class PaymentServiceImpl implements PaymentService {
             return data.getCheckoutUrl();
         } catch (Exception e) {
             log.error("createPayOSLink() error: {}", e.getMessage());
+            throw new AppException(HttpStatus.NO_CONTENT.value(),"Lỗi tạo link thanh toán");
+        }
+    }
+
+    @Override
+    public String createPayOSLink(int price, String orderInfo) {
+        try {
+            log.debug("createPayOSLink() PaymentServiceImpl start");
+            String currentTimeString = String.valueOf(String.valueOf(new Date().getTime()));
+            long orderCode = Long.parseLong(currentTimeString.substring(currentTimeString.length() - 6));
+            UserDetailsImpl user = AuthUtils.getCurrentUser();
+            PaymentData paymentData = PaymentData.builder().orderCode(orderCode).description(orderInfo).amount(price).buyerEmail(user.getEmail())
+                    .returnUrl(backEndServerUrl +"/payment/payos-redirect").cancelUrl(backEndServerUrl+"/payment/payos-redirect").build();
+            CheckoutResponseData data = payOS.createPaymentLink(paymentData);
+            log.debug("createPayOSLink() PaymentServiceImpl end");
+            return data.getCheckoutUrl();
+        } catch (Exception e) {
+            log.error("createPayOSLink() PaymentServiceImpl error: {}", e.getMessage());
+            throw new AppException(HttpStatus.NO_CONTENT.value(),"Lỗi tạo link thanh toán");
+        }
+    }
+
+    @Override
+    public String createPayOSLink(PaymentData paymentData) {
+        try {
+            log.debug("createPayOSLink() PaymentServiceImpl start | paymentData: {}", paymentData);
+            CheckoutResponseData data = payOS.createPaymentLink(paymentData);
+            log.debug("createPayOSLink() PaymentServiceImpl end | data: {}", data);
+            return data.getCheckoutUrl();
+        } catch (Exception e) {
+            log.error("createPayOSLink() PaymentServiceImpl Error: {}", e.getMessage());
             throw new AppException(HttpStatus.NO_CONTENT.value(),"Lỗi tạo link thanh toán");
         }
     }
