@@ -8,8 +8,10 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.web.servlet.handler.UserRoleAuthorizationInterceptor;
 
+import java.time.Instant;
 import java.util.UUID;
 
 @Entity
@@ -41,4 +43,12 @@ public class User {
     private String password;
 
     private UserRole role;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, optional = true, fetch = FetchType.LAZY)
+    private UserSubscription subscription;
+
+    private boolean getIsPremium() {
+        return subscription != null && subscription.getExpiryDate() > Instant.now().toEpochMilli();
+    }
+
 }
