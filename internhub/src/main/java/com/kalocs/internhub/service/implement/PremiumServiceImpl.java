@@ -114,15 +114,28 @@ public class PremiumServiceImpl implements PremiumService {
             if (transaction.getStatus().equals(PaymentStatus.PENDING)) {
                 transaction.setStatus(PaymentStatus.SUCCESSFUL);
                 transactionBusiness.update(transaction);
-                UserSubscription userSubscription = UserSubscription.builder()
-                        .id(transactionId)
-                        .user(transaction.getUser())
-                        .plan(premiumPlan)
-                        .startDate(Instant.now().toEpochMilli())
-                        .expiryDate(Instant.now().plusMillis(premiumPlan.getDuration()).toEpochMilli())
-                        .build();
-                cacheService.remove(String.valueOf(orderCode));
-                userSubscriptionBusiness.create(userSubscription);
+                if (transaction.getUser().getSubscription()!= null) {
+                    UserSubscription userSubscription = transaction.getUser().getSubscription();
+                    userSubscription.setPlan(premiumPlan);
+                    if (transaction.getUser().getSubscription().getExpiryDate() > Instant.now().toEpochMilli()) {
+                        userSubscription.setStartDate(transaction.getUser().getSubscription().getStartDate());
+                        userSubscription.setExpiryDate(transaction.getUser().getSubscription().getExpiryDate() + premiumPlan.getDuration());
+                    } else {
+                        userSubscription.setStartDate(Instant.now().toEpochMilli());
+                        userSubscription.setExpiryDate(Instant.now().plusMillis(premiumPlan.getDuration()).toEpochMilli());
+                    }
+                    userSubscriptionBusiness.update(userSubscription);
+                } else {
+                    UserSubscription userSubscription = UserSubscription.builder()
+                            .id(transactionId)
+                            .user(transaction.getUser())
+                            .plan(premiumPlan)
+                            .startDate(Instant.now().toEpochMilli())
+                            .expiryDate(Instant.now().plusMillis(premiumPlan.getDuration()).toEpochMilli())
+                            .build();
+                    cacheService.remove(String.valueOf(orderCode));
+                    userSubscriptionBusiness.create(userSubscription);
+                }
                 log.info("redirectPayOS() PremiumServiceImpl end");
                 return true;
             }
