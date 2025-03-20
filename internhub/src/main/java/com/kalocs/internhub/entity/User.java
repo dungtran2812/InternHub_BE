@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.web.servlet.handler.UserRoleAuthorizationInterceptor;
 
 import java.time.Instant;
@@ -49,6 +50,23 @@ public class User {
 
     private boolean getIsPremium() {
         return subscription != null && subscription.getExpiryDate() > Instant.now().toEpochMilli();
+    }
+
+    @Column(nullable = true)
+    @CreatedDate
+    private long createdDate;
+    @Column(nullable = true)
+    private long updatedDate;
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdDate = Instant.now().toEpochMilli();
+        this.updatedDate = Instant.now().toEpochMilli();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedDate = Instant.now().toEpochMilli();
     }
 
 }

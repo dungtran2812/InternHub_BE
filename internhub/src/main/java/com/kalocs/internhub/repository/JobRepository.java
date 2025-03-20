@@ -33,4 +33,6 @@ public interface JobRepository extends JpaRepository<Job, UUID> {
             Pageable pageable
     );
 
+    int countByCreatedDateBetween(long startDate, long endDate);
+
 }

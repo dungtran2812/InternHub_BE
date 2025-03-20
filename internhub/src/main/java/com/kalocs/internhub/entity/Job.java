@@ -5,7 +5,9 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 
+import java.time.Instant;
 import java.util.UUID;
 
 @Entity
@@ -38,4 +40,21 @@ public class Job {
     @ManyToOne
     @JoinColumn(name = "company_id")
     private Company company;
+
+    @Column(nullable = true)
+    @CreatedDate
+    private long createdDate;
+    @Column(nullable = true)
+    private long updatedDate;
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdDate = Instant.now().toEpochMilli();
+        this.updatedDate = Instant.now().toEpochMilli();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedDate = Instant.now().toEpochMilli();
+    }
 }
