@@ -16,4 +16,6 @@ public interface RecruiterBusiness {
     Recruiter updateRecruiter(Recruiter recruiter);
 
     boolean deleteRecruiter(UUID id);
+
+    int getRecruiterCount(long startDate, long endDate);
 }

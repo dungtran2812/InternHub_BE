@@ -37,4 +37,12 @@ public class JobBusinessImpl extends BaseBusinessImpl<Job,JobRepository> impleme
         log.debug("searchJob() JobBusinessImpl end");
         return result;
     }
+
+    @Override
+    public int getJobCount(long startDate, long endDate) {
+        log.debug("getJobCount() JobBusinessImpl start | startDate: {}, endDate: {}", startDate, endDate);
+        int result = jobRepository.countByCreatedDateBetween(startDate, endDate);
+        log.debug("getJobCount() JobBusinessImpl end | result: {}", result);
+        return result;
+    }
 }

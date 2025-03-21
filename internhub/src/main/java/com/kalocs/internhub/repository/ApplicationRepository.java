@@ -16,4 +16,6 @@ public interface ApplicationRepository extends JpaRepository<Application, UUID> 
     Page<Application> findByCompanyId(UUID id, Pageable pageable);
 
     Page<Application> findByStudentId(UUID studentId, Pageable pageable);
+
+    int countByCreatedDateBetween(long startDate, long endDate);
 }

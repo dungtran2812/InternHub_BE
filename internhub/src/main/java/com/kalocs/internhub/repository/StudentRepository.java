@@ -8,4 +8,5 @@ import java.util.UUID;
 
 @Repository
 public interface StudentRepository extends JpaRepository<Student, UUID> {
+    int countByCreatedDateBetween(long startDate, long endDate);
 }

@@ -44,4 +44,17 @@ public class ApplicationBusinessImpl extends BaseBusinessImpl<Application, Appli
             throw e;
         }
     }
+
+    @Override
+    public int getApplicationCount(long startDate, long endDate) {
+        try {
+            log.debug("getApplicationCount() ApplicationBusinessImpl start | startDate: {}, endDate: {}", startDate, endDate);
+            int result = repository.countByCreatedDateBetween(startDate, endDate);
+            log.debug("getApplicationCount() ApplicationBusinessImpl end | result: {}", result);
+            return result;
+        } catch (Exception e) {
+            log.error("getApplicationCount() ApplicationBusinessImpl error | {}", e.getMessage());
+            throw e;
+        }
+    }
 }
