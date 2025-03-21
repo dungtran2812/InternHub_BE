@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 public class CacheService {
     private final Cache<String, String> cache = Caffeine.newBuilder()
             .expireAfterWrite(15, TimeUnit.MINUTES)
-            .maximumSize(1000) // Giới hạn 1000 transaction
+            .maximumSize(100)
             .build();
 
     public void cache(String key, String value) {
