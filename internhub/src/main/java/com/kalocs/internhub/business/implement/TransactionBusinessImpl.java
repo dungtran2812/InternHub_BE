@@ -1,15 +1,44 @@
 package com.kalocs.internhub.business.implement;
 
 import com.kalocs.internhub.business.TransactionBusiness;
+import com.kalocs.internhub.common.PaymentStatus;
 import com.kalocs.internhub.entity.Transaction;
 import com.kalocs.internhub.repository.TransactionRepository;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
+@Log4j2
 public class TransactionBusinessImpl extends BaseBusinessImpl<Transaction, TransactionRepository> implements TransactionBusiness {
     @Autowired
     public TransactionBusinessImpl(TransactionRepository transactionRepository) {
         super(transactionRepository);
+    }
+
+    @Override
+    public int getTransactionCount(long startDate, long endDate) {
+        try {
+            log.debug("getTransactionCount() TransactionBusinessImpl start | startDate: {}, endDate: {}", startDate, endDate);
+            int result = repository.countByCreatedAtBetweenAndStatus(startDate, endDate, PaymentStatus.SUCCESSFUL);
+            log.debug("getTransactionCount() TransactionBusinessImpl end | result: {}", result);
+            return result;
+        } catch (Exception e) {
+            log.error("getTransactionCount() TransactionBusinessImpl error | {}", e.getMessage());
+            throw e;
+        }
+    }
+
+    @Override
+    public int getTotalRevenue(long startDate, long endDate) {
+        try {
+            log.debug("getTotalRevenue() TransactionBusinessImpl start | startDate: {}, endDate: {}", startDate, endDate);
+            int result = repository.getRevenue(startDate, endDate,PaymentStatus.SUCCESSFUL).intValue();
+            log.debug("getTotalRevenue() TransactionBusinessImpl end | result: {}", result);
+            return result;
+        } catch (Exception e) {
+            log.error("getTotalRevenue() TransactionBusinessImpl error | {}", e.getMessage());
+            throw e;
+        }
     }
 }
