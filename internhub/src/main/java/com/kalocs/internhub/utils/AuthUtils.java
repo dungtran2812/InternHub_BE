@@ -12,7 +12,7 @@ public class AuthUtils {
     }
     public static UserDetailsImpl getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null) {
+        if (authentication.getPrincipal() != "anonymousUser") {
             return (UserDetailsImpl) authentication.getPrincipal();
         } else {
             throw new AppException(401,"User not found in security context");

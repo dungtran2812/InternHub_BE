@@ -8,6 +8,9 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.UUID;
+
 @Service
 @Log4j2
 public class TransactionBusinessImpl extends BaseBusinessImpl<Transaction, TransactionRepository> implements TransactionBusiness {
@@ -38,6 +41,19 @@ public class TransactionBusinessImpl extends BaseBusinessImpl<Transaction, Trans
             return result;
         } catch (Exception e) {
             log.error("getTotalRevenue() TransactionBusinessImpl error | {}", e.getMessage());
+            throw e;
+        }
+    }
+
+    @Override
+    public List<Transaction> getUserTransaction(UUID userId) {
+        try {
+            log.debug("getUserTransaction() TransactionBusinessImpl start | userId: {}", userId);
+            List<Transaction> result = repository.findAllByUserId(userId);
+            log.debug("getUserTransaction() TransactionBusinessImpl end | result: {}", result);
+            return result;
+        } catch (Exception e) {
+            log.error("getUserTransaction() TransactionBusinessImpl error | {}", e.getMessage());
             throw e;
         }
     }
