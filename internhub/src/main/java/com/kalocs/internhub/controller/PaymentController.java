@@ -19,6 +19,8 @@ import vn.payos.PayOS;
 import vn.payos.type.Webhook;
 import vn.payos.type.WebhookData;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping(URLConstant.PAYMENT)
 @Log4j2
@@ -89,13 +91,7 @@ public class PaymentController {
             @RequestParam long orderCode) {
         log.info("handlePaymentRedirect() PaymentController start");
         HttpHeaders headers = new HttpHeaders();
-        String redirect = feUrl + "/payment/fail";
-        if ("PAID".equals(status)) {
-            boolean check = premiumService.redirectPayOS(orderCode);
-            if (check) {
-                redirect = feUrl + "/payment/success";
-            }
-        }
+        String redirect = premiumService.redirectPayOS(orderCode);
         headers.add("Location", redirect);
         log.info("handlePaymentRedirect() PaymentController end");
         return new ResponseEntity<>(headers, HttpStatus.FOUND);

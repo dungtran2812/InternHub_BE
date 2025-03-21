@@ -88,13 +88,13 @@ public class PremiumServiceImpl implements PremiumService {
             log.info("byPremium() PremiumServiceImpl end");
             return link;
         } catch (Exception e) {
-            log.error("byPremium() PremiumServiceImpl error: " + e.getMessage());
-            throw new AppException(500, "Lỗi khi mua gói premium");
+            log.error("byPremium() PremiumServiceImpl error: {}", e.getMessage());
+            throw e;
         }
     }
 
     @Override
-    public boolean redirectPayOS(long orderCode) {
+    public String redirectPayOS(long orderCode) {
         try {
             log.info("redirectPayOS() PremiumServiceImpl start");
             UUID transactionId = UUID.nameUUIDFromBytes(String.valueOf(orderCode).getBytes());
@@ -107,7 +107,7 @@ public class PremiumServiceImpl implements PremiumService {
             }
             Transaction transaction = transactionBusiness.getById(transactionId).orElseThrow(() -> new AppException(404, "Không tìm thấy giao dịch"));
             if (transaction.getStatus().equals(PaymentStatus.SUCCESSFUL)) {
-                return true;
+                return frontEndUrl + "/payment/success?id=" + transactionId;
             }
             UUID premiumPlanId = UUID.fromString(cacheService.get(String.valueOf(orderCode)));
             PremiumPlan premiumPlan = premiumPlanBusiness.getById(premiumPlanId).orElseThrow(() -> new AppException(404, "Không tìm thấy gói premium"));
@@ -137,12 +137,12 @@ public class PremiumServiceImpl implements PremiumService {
                     userSubscriptionBusiness.create(userSubscription);
                 }
                 log.info("redirectPayOS() PremiumServiceImpl end");
-                return true;
+                return frontEndUrl + "/payment/success?id=" + transactionId;
             }
-            return false;
+            return frontEndUrl + "/payment/fail";
         } catch (Exception e) {
-            log.error("redirectPayOS() PremiumServiceImpl error: " + e.getMessage());
-            throw new AppException(500, "Lỗi khi xử lý thanh toán");
+            log.error("redirectPayOS() PremiumServiceImpl error: {}", e.getMessage());
+            throw new AppException(500, e.getMessage());
         }
     }
 }

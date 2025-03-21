@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.UUID;
 
 @Repository
@@ -16,4 +17,5 @@ public interface TransactionRepository extends JpaRepository<Transaction,UUID> {
     @Query("SELECT COALESCE(SUM(t.amount), 0) FROM Transaction t WHERE t.createdAt BETWEEN :startDate AND :endDate AND t.status = :status")
     Double getRevenue(@Param("startDate") long startDate, @Param("endDate") long endDate, @Param("status") PaymentStatus status);
 
+    List<Transaction> findAllByUserId(UUID userId);
 }
