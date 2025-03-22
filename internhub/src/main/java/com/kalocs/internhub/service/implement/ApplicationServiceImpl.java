@@ -148,14 +148,15 @@ public class ApplicationServiceImpl implements ApplicationService {
             Student student = studentBusiness.getById(AuthUtils.getCurrentUserId()).orElseThrow(() ->
                     new AppException(404, "Không tìm thấy sinh viên"));
             Job job = jobBusiness.getById(UUID.fromString(applicationRequest.getJobId())).orElseThrow(() ->new AppException(404, "Không tìm thấy công việc"));
-            Application newApplication = new Application();
-            newApplication.setStudent(student);
-            newApplication.setJob(job);
-            newApplication.setId(UUID.randomUUID());
-            newApplication.setResume(applicationRequest.getResume());
-            newApplication.setCoverLetter(applicationRequest.getCoverLetter());
-            newApplication.setDate(Instant.now().toEpochMilli());
-            newApplication.setStatus(ApplicationStatus.PENDING);
+            job.setCompany(null);
+
+            Application newApplication = Application.builder()
+                    .id(UUID.randomUUID())
+                    .student(student)
+                    .job(job)
+                    .resume(applicationRequest.getResume())
+                    .coverLetter(applicationRequest.getCoverLetter())
+                    .status(ApplicationStatus.PENDING).date(Instant.now().toEpochMilli()).build();
             ApplicationDTO result = modelMapper.map(applicationBusiness.create(newApplication), ApplicationDTO.class);
             log.debug("applyJob() ApplicationServiceImpl end | {}", result);
             return result;
@@ -184,6 +185,30 @@ public class ApplicationServiceImpl implements ApplicationService {
             return result;
         } catch (Exception e) {
             log.error("approveApplication() ApplicationServiceImpl error | {}", e.getMessage());
+            throw e;
+        }
+    }
+
+
+    @Override
+    public ApplicationDTO updateStatus(String id, ApplicationStatus status) {
+        try {
+            log.debug("updateStatus() ApplicationServiceImpl start | id: {}, status: {}", id, status);
+            Application application = applicationBusiness.getById(UUID.fromString(id)).orElseThrow(() ->
+                    new AppException(404, "Không tìm thấy ứng tuyển để cập nhật"));
+            Recruiter recruiter = recruiterBusiness.getRecruiter(AuthUtils.getCurrentUserId());
+            if (recruiter == null) {
+                throw new AppException(404, "Không tìm thấy nhà tuyển dụng");
+            }
+            if (!application.getJob().getCompany().getId().equals(recruiter.getCompany().getId())) {
+                throw new AppException(HttpStatus.FORBIDDEN.value(), "Không thể duyệt ứng tuyển của công ty khác");
+            }
+            application.setStatus(status);
+            ApplicationDTO result = modelMapper.map(applicationBusiness.update(application), ApplicationDTO.class);
+            log.debug("updateStatus() ApplicationServiceImpl end | {}", result);
+            return result;
+        } catch (Exception e) {
+            log.error("updateStatus() ApplicationServiceImpl error | {}", e.getMessage());
             throw e;
         }
     }
@@ -247,4 +272,5 @@ public class ApplicationServiceImpl implements ApplicationService {
             throw e;
         }
     }
+
 }

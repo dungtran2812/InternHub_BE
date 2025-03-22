@@ -1,5 +1,6 @@
 package com.kalocs.internhub.service;
 
+import com.kalocs.internhub.common.ApplicationStatus;
 import com.kalocs.internhub.model.ApplicationDTO;
 import com.kalocs.internhub.payload.request.ApplicationRequest;
 import com.kalocs.internhub.payload.request.ApplyJobRequest;
@@ -28,4 +29,6 @@ public interface ApplicationService {
     Page<ApplicationDTO> getApplicationByStudent(int page, int pageSize, String order);
 
     boolean deleteApplicationByStudent(UUID id);
+
+    ApplicationDTO updateStatus(String id, ApplicationStatus status);
 }
