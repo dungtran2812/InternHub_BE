@@ -57,4 +57,17 @@ public class ApplicationBusinessImpl extends BaseBusinessImpl<Application, Appli
             throw e;
         }
     }
+
+    @Override
+    public int countApplicationByCompanyId(UUID id) {
+        try {
+            log.debug("countApplicationByCompanyId() ApplicationBusinessImpl start | id: {}", id);
+            int result = repository.countByCompanyId(id);
+            log.debug("countApplicationByCompanyId() ApplicationBusinessImpl end | result: {}", result);
+            return result;
+        } catch (Exception e) {
+            log.error("countApplicationByCompanyId() ApplicationBusinessImpl error | {}", e.getMessage());
+            throw e;
+        }
+    }
 }
