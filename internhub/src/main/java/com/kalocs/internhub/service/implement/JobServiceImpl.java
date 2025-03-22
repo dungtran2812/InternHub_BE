@@ -78,12 +78,12 @@ public class JobServiceImpl implements JobService {
                 log.debug("createJob() JobServiceImpl end | null");
                 throw new AppException(400, "Cần có công ty để tạo việc làm");
             }
-            Company company = companyBusiness.getById(job.getCompanyId()).orElseThrow(() -> new AppException(404, "Không tìm thấy công ty đã chọn"));
+            Company company = companyBusiness.getById(job.getCompanyId()).orElseThrow(() -> new AppException(400, "Không tìm thấy công ty đã chọn"));
             jobToCreate.setCompany(company);
 
             // Check if industry exists
             if (!(job.getIndustryId() == null || job.getIndustryId().isEmpty())) {
-                Industry industry = industryBusiness.getById(Integer.parseInt(job.getIndustryId())).orElseThrow(() -> new AppException(404, "Không tìm thấy lĩnh vực đã chọn"));
+                Industry industry = industryBusiness.getById(Integer.parseInt(job.getIndustryId())).orElseThrow(() -> new AppException(400, "Không tìm thấy lĩnh vực đã chọn"));
                 jobToCreate.setIndustry(industry);
             }
 
@@ -174,13 +174,17 @@ public class JobServiceImpl implements JobService {
             jobToCreate.setId(UUID.randomUUID());
             // Get Company from recruiter
             Recruiter recruiter = recruiterBusiness.getRecruiter(AuthUtils.getCurrentUserId());
+            if (recruiter.getCompany() == null) {
+                log.debug("createJob() JobServiceImpl by recruiter end | null");
+                throw new AppException(400, "Cần có công ty để tạo việc làm");
+            }
             jobToCreate.setCompany(recruiter.getCompany());
             // Check if industry exists
-            Industry industry = industryBusiness.getById(jobRequest.getIndustryId()).orElseThrow(() -> new AppException(404, "Không tìm thấy lĩnh vực đã chọn"));
+            Industry industry = industryBusiness.getById(jobRequest.getIndustryId()).orElseThrow(() -> new AppException(400, "Không tìm thấy lĩnh vực đã chọn"));
             jobToCreate.setIndustry(industry);
 
             // Check if job function exists
-            JobFunction jobFunction = jobFunctionBusiness.getById(jobRequest.getJobFunctionId()).orElseThrow(() -> new AppException(404, "Không tìm thấy ngành nghề đã chọn"));
+            JobFunction jobFunction = jobFunctionBusiness.getById(jobRequest.getJobFunctionId()).orElseThrow(() -> new AppException(400, "Không tìm thấy ngành nghề đã chọn"));
             jobToCreate.setJobFunction(jobFunction);
 
             JobDTO createdJob = modelMapper.map(jobBusiness.create(jobToCreate), JobDTO.class);
