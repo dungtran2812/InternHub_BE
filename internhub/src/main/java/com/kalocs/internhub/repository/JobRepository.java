@@ -35,4 +35,5 @@ public interface JobRepository extends JpaRepository<Job, UUID> {
 
     int countByCreatedDateBetween(long startDate, long endDate);
 
+    int countByCompanyId(UUID id);
 }

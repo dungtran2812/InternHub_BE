@@ -3,10 +3,12 @@ package com.kalocs.internhub.controller;
 import com.kalocs.internhub.common.URLConstant;
 import com.kalocs.internhub.model.RecruiterDTO;
 import com.kalocs.internhub.payload.request.RecruiterRequest;
+import com.kalocs.internhub.payload.response.RecruiterDashboard;
 import com.kalocs.internhub.service.RecruiterService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -65,6 +67,15 @@ public class RecruiterController {
             log.info("deleteRecruiter() RecruiterController End | Recruiter not deleted");
             return ResponseEntity.ok().body("Cannot delete Recruiter");
         }
+    }
+
+    @GetMapping("dashboard")
+    @PreAuthorize("hasRole('RECRUITER')")
+    public ResponseEntity<RecruiterDashboard> dashboard() {
+        log.info("dashboard() RecruiterController Start |");
+        RecruiterDashboard dashboard = recruiterService.dashboard();
+        log.info("dashboard() RecruiterController End | {}", dashboard);
+        return ResponseEntity.ok().body(dashboard);
     }
 
 

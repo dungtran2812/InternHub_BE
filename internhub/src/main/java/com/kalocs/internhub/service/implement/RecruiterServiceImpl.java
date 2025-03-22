@@ -1,13 +1,19 @@
 package com.kalocs.internhub.service.implement;
 
+import com.kalocs.internhub.business.ApplicationBusiness;
 import com.kalocs.internhub.business.CompanyBusiness;
+import com.kalocs.internhub.business.JobBusiness;
 import com.kalocs.internhub.business.RecruiterBusiness;
 import com.kalocs.internhub.config.handler.AppException;
+import com.kalocs.internhub.entity.Application;
 import com.kalocs.internhub.entity.Company;
 import com.kalocs.internhub.entity.Recruiter;
+import com.kalocs.internhub.model.CompanyDTO;
 import com.kalocs.internhub.model.RecruiterDTO;
 import com.kalocs.internhub.payload.request.RecruiterRequest;
+import com.kalocs.internhub.payload.response.RecruiterDashboard;
 import com.kalocs.internhub.service.RecruiterService;
+import com.kalocs.internhub.utils.AuthUtils;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,12 +28,16 @@ public class RecruiterServiceImpl implements RecruiterService {
 
     private final RecruiterBusiness recruiterBusiness;
     private final CompanyBusiness companyBusiness;
+    private final JobBusiness jobBusiness;
+    private final ApplicationBusiness applicationBusiness;
     private final ModelMapper modelMapper;
 
     @Autowired
-    public RecruiterServiceImpl(RecruiterBusiness recruiterBusiness, CompanyBusiness companyBusiness, ModelMapper modelMapper) {
+    public RecruiterServiceImpl(RecruiterBusiness recruiterBusiness, CompanyBusiness companyBusiness, JobBusiness jobBusiness, ApplicationBusiness applicationBusiness, ModelMapper modelMapper) {
         this.recruiterBusiness = recruiterBusiness;
         this.companyBusiness = companyBusiness;
+        this.jobBusiness = jobBusiness;
+        this.applicationBusiness = applicationBusiness;
         this.modelMapper = modelMapper;
     }
 
@@ -107,6 +117,31 @@ public class RecruiterServiceImpl implements RecruiterService {
             return check;
         } catch (Exception e) {
             log.error("deleteRecruiter RecruiterServiceImpl error | {}", e.getMessage());
+            throw e;
+        }
+    }
+
+    @Override
+    public RecruiterDashboard dashboard() {
+        try {
+            log.debug("dashboard() RecruiterServiceImpl start |");
+            UUID recruiterId = AuthUtils.getCurrentUserId();
+            Recruiter recruiter = recruiterBusiness.getRecruiter(recruiterId);
+            Company company = recruiter.getCompany();
+            if (company == null) {
+                throw new AppException(400,"Bạn chưa là nhà tuyển dụng của bất ky công ty nào");
+            }
+            int jobCount = jobBusiness.countJobByCompanyId(company.getId());
+            int applicationCount = applicationBusiness.countApplicationByCompanyId(company.getId());
+            RecruiterDashboard dashboard = RecruiterDashboard.builder()
+                    .jobCount(jobCount)
+                    .applicationCount(applicationCount)
+                    .company(modelMapper.map(company, CompanyDTO.class))
+                    .build();
+            log.debug("dashboard() RecruiterServiceImpl end | {}", dashboard);
+            return dashboard;
+        } catch (Exception e) {
+            log.error("dashboard() RecruiterServiceImpl error | {}", e.getMessage());
             throw e;
         }
     }

@@ -9,6 +9,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
+
 
 @Component
 @Log4j2
@@ -43,6 +45,14 @@ public class JobBusinessImpl extends BaseBusinessImpl<Job,JobRepository> impleme
         log.debug("getJobCount() JobBusinessImpl start | startDate: {}, endDate: {}", startDate, endDate);
         int result = jobRepository.countByCreatedDateBetween(startDate, endDate);
         log.debug("getJobCount() JobBusinessImpl end | result: {}", result);
+        return result;
+    }
+
+    @Override
+    public int countJobByCompanyId(UUID id) {
+        log.debug("countJobByCompanyId() JobBusinessImpl start | id: {}", id);
+        int result = jobRepository.countByCompanyId(id);
+        log.debug("countJobByCompanyId() JobBusinessImpl end | result: {}", result);
         return result;
     }
 }
