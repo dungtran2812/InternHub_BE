@@ -108,4 +108,14 @@ public class JobController {
         return ResponseEntity.ok().body(job);
     }
 
+    @GetMapping("recruiter-get-jobs")
+    @Operation(summary = "Get jobs by recruiter", description = "Recruiter gets jobs")
+    @PreAuthorize("hasRole('RECRUITER')")
+    public ResponseEntity<List<JobDTO>> getJobsByRecruiter() {
+        log.info("getJobsByRecruiter() JobController start");
+        List<JobDTO> jobs = jobService.getJobsByRecruiter();
+        log.info("getJobsByRecruiter() JobController end | {}", jobs);
+        return ResponseEntity.ok().body(jobs);
+    }
+
 }

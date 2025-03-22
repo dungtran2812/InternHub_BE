@@ -26,4 +26,6 @@ public interface JobService {
     JobDTO createJob(CreateJobRequest jobRequest);
 
     JobDTO editJob(CreateJobRequest jobRequest, String id);
+
+    List<JobDTO> getJobsByRecruiter();
 }

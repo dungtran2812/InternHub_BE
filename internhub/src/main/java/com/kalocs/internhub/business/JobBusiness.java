@@ -4,6 +4,8 @@ import com.kalocs.internhub.entity.Job;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -13,4 +15,6 @@ public interface JobBusiness extends BaseBusiness<Job> {
     int getJobCount(long startDate, long endDate);
 
     int countJobByCompanyId(UUID id);
+
+    List<Job> getByCompanyId(UUID id);
 }
