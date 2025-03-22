@@ -224,4 +224,23 @@ public class JobServiceImpl implements JobService {
             throw e;
         }
     }
+
+    @Override
+    public List<JobDTO> getJobsByRecruiter() {
+        try {
+            log.debug("getJobsByRecruiter() JobServiceImpl start");
+            Recruiter recruiter = recruiterBusiness.getRecruiter(AuthUtils.getCurrentUserId());
+            if (recruiter.getCompany() == null) {
+                log.debug("getJobsByRecruiter() JobServiceImpl end | null");
+                throw new AppException(400, "Bạn chưa là nhà tuyển dụng của bất kỳ công ty nào");
+            }
+            List<JobDTO> jobs = jobBusiness.getByCompanyId(recruiter.getCompany().getId()).stream()
+                    .map(job -> modelMapper.map(job, JobDTO.class)).toList();
+            log.debug("getJobsByRecruiter() JobServiceImpl end | {}", jobs);
+            return jobs;
+        } catch (Exception e) {
+            log.error("getJobsByRecruiter() JobServiceImpl error | {}", e.getMessage());
+            throw e;
+        }
+    }
 }

@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.UUID;
 
 
@@ -53,6 +54,14 @@ public class JobBusinessImpl extends BaseBusinessImpl<Job,JobRepository> impleme
         log.debug("countJobByCompanyId() JobBusinessImpl start | id: {}", id);
         int result = jobRepository.countByCompanyId(id);
         log.debug("countJobByCompanyId() JobBusinessImpl end | result: {}", result);
+        return result;
+    }
+
+    @Override
+    public List<Job> getByCompanyId(UUID id) {
+        log.debug("getByCompanyId() JobBusinessImpl start | id: {}", id);
+        List<Job> result = jobRepository.findByCompanyId(id);
+        log.debug("getByCompanyId() JobBusinessImpl end | result: {}", result);
         return result;
     }
 }
