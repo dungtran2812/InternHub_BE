@@ -3,6 +3,7 @@ package com.kalocs.internhub.entity;
 import com.kalocs.internhub.common.ApplicationStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
@@ -16,6 +17,7 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @EntityListeners(AuditingEntityListener.class)
 public class Application {
     @Id
