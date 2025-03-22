@@ -18,4 +18,7 @@ public interface ApplicationRepository extends JpaRepository<Application, UUID> 
     Page<Application> findByStudentId(UUID studentId, Pageable pageable);
 
     int countByCreatedDateBetween(long startDate, long endDate);
+
+    @Query("SELECT COUNT(a) FROM Application a WHERE a.job.company.id = :id")
+    int countByCompanyId(UUID id);
 }

@@ -2,6 +2,7 @@ package com.kalocs.internhub.service;
 
 import com.kalocs.internhub.model.RecruiterDTO;
 import com.kalocs.internhub.payload.request.RecruiterRequest;
+import com.kalocs.internhub.payload.response.RecruiterDashboard;
 
 import java.util.List;
 import java.util.UUID;
@@ -16,4 +17,6 @@ public interface RecruiterService {
     RecruiterDTO updateRecruiter(UUID id, RecruiterRequest recruiter);
 
     boolean deleteRecruiter(UUID id);
+
+    RecruiterDashboard dashboard();
 }
