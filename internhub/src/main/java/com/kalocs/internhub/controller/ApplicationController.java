@@ -1,5 +1,6 @@
 package com.kalocs.internhub.controller;
 
+import com.kalocs.internhub.common.ApplicationStatus;
 import com.kalocs.internhub.common.URLConstant;
 import com.kalocs.internhub.model.ApplicationDTO;
 import com.kalocs.internhub.payload.request.ApplicationRequest;
@@ -84,12 +85,12 @@ public class ApplicationController {
         return ResponseEntity.ok().body(applyJob);
     }
 
-    @PatchMapping("{id}/approve")
+    @PutMapping("{id}/update-status")
     @PreAuthorize("hasRole('RECRUITER')")
     @Operation(summary = "Update application status", description = "Recruiter update application status")
-    public ResponseEntity<ApplicationDTO> updateApplicationStatus(@PathVariable String id) {
+    public ResponseEntity<ApplicationDTO> updateApplicationStatus(@PathVariable String id, @RequestParam ApplicationStatus status) {
         log.info("updateApplicationStatus() ApplicationController start | id: {}", id);
-        ApplicationDTO result = applicationService.approveApplication(id);
+        ApplicationDTO result = applicationService.updateStatus(id,status);
         log.info("updateApplicationStatus() ApplicationController end | {}", result);
         return ResponseEntity.ok().body(result);
     }
