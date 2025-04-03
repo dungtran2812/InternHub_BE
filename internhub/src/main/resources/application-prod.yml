@@ -1,6 +1,6 @@
 spring:
   datasource:
-    password: CHGqLAP2c6fD1Jdk8fKl8PSfZQ4HssKU
-    url: jdbc:postgresql://dpg-cutujrl6l47c73a9hegg-a.singapore-postgres.render.com:5432/internhubdb_wpk4
+    password: uWgDB4JqX2XTxkdfAOo4ZlmHX1eNy71D
+    url: jdbc:postgresql://dpg-cvn8io49c44c73dkc68g-a.singapore-postgres.render.com:5432/internhub_6g0h
     username: kalocs
     driver-class-name: org.postgresql.Driver
