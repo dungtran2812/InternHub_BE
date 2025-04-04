@@ -8,7 +8,7 @@ RUN gradle build -x test --no-daemon
 FROM eclipse-temurin:17-jre-jammy
 
 # Expose the application port
-EXPOSE 8081
+EXPOSE 8080
 
 # Set the working directory
 WORKDIR /app
