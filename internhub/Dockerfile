@@ -23,4 +23,4 @@ WORKDIR /app
 COPY --from=build /home/gradle/src/build/libs/*-SNAPSHOT.jar /app/spring-boot-application.jar
 
 # Run the application with optimized JVM settings
-ENTRYPOINT ["java" , "-Dspring.profiles.active=product", "-Djava.security.egd=file:/dev/./urandom", "-jar", "/app/spring-boot-application.jar"]
+ENTRYPOINT ["java" , "-Dspring.profiles.active=prod", "-Djava.security.egd=file:/dev/./urandom", "-jar", "/app/spring-boot-application.jar"]
