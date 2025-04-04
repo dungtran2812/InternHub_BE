@@ -1,5 +1,5 @@
 # Stage 1: Build the application
-FROM gradle:8.11.1-jdk8-alpine AS build
+FROM gradle:jdk17-jammy AS build
 
 # Set the working directory
 WORKDIR /home/gradle/src
@@ -11,7 +11,7 @@ COPY . .
 RUN gradle build --no-daemon
 
 # Stage 2: Run the application
-FROM openjdk:8-jre-slim
+FROM eclipse-temurin:17-jdk-jammy
 
 # Expose the application port
 EXPOSE 8080
