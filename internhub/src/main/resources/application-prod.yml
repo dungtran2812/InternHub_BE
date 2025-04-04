@@ -4,3 +4,6 @@ spring:
     url: jdbc:postgresql://dpg-cvn8io49c44c73dkc68g-a.singapore-postgres.render.com:5432/internhub_6g0h
     username: kalocs
     driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      connection-timeout: 10000
