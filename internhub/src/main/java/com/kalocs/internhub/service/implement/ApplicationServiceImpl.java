@@ -148,8 +148,6 @@ public class ApplicationServiceImpl implements ApplicationService {
             Student student = studentBusiness.getById(AuthUtils.getCurrentUserId()).orElseThrow(() ->
                     new AppException(404, "Không tìm thấy sinh viên"));
             Job job = jobBusiness.getById(UUID.fromString(applicationRequest.getJobId())).orElseThrow(() ->new AppException(404, "Không tìm thấy công việc"));
-            job.setCompany(null);
-
             Application newApplication = Application.builder()
                     .id(UUID.randomUUID())
                     .student(student)
