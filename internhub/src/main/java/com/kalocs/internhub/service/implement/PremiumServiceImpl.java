@@ -77,6 +77,7 @@ public class PremiumServiceImpl implements PremiumService {
                     .description(orderInfo)
                     .amount((int) premiumPlan.getPrice())
                     .buyerEmail(user.getEmail())
+                    .buyerName(user.getFullName())
                     .returnUrl(redirectUrl)
                     .cancelUrl(redirectUrl)
                     .build();
