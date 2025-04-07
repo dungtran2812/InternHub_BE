@@ -18,4 +18,17 @@ public interface TransactionRepository extends JpaRepository<Transaction,UUID> {
     Double getRevenue(@Param("startDate") long startDate, @Param("endDate") long endDate, @Param("status") PaymentStatus status);
 
     List<Transaction> findAllByUserId(UUID userId);
+
+    @Query(value = """
+    SELECT 
+        t.description,
+        TO_TIMESTAMP(t.created_at / 1000)::date AS txn_date,
+        COUNT(*) AS count,
+        SUM(t.amount) AS total_amount
+    FROM transactions t
+    WHERE t.status = 1
+    GROUP BY t.description, txn_date
+    ORDER BY txn_date DESC
+    """, nativeQuery = true)
+    List<Object[]> getTransactionSummaryByDescriptionAndDateStatusOne();
 }
